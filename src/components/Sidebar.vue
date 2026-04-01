@@ -1,41 +1,48 @@
 <template>
   <el-aside :width="sidebarWidth" class="sidebar" :class="{ collapsed: sidebarCollapsed }">
     <el-scrollbar>
-      <el-menu
-        :default-active="activeMenu"
-        :collapse="sidebarCollapsed"
-        :collapse-transition="false"
-        class="sidebar-menu"
-        @select="$emit('menu-select', $event)"
-      >
+      <el-menu :default-active="activeMenu" :collapse="sidebarCollapsed" :collapse-transition="false"
+        class="sidebar-menu" @select="$emit('menu-select', $event)">
         <el-menu-item index="home">
-          <el-icon><HomeFilled /></el-icon>
+          <el-icon>
+            <HomeFilled />
+          </el-icon>
           <template #title>首页</template>
         </el-menu-item>
-        
-        <el-menu-item index="profile">
-          <el-icon><User /></el-icon>
-          <template #title>我的信息</template>
-        </el-menu-item>
-        
+
         <el-menu-item index="problems">
-          <el-icon><List /></el-icon>
+          <el-icon>
+            <List />
+          </el-icon>
           <template #title>题目列表</template>
         </el-menu-item>
         
-        <el-menu-item index="qa">
-          <el-icon><ChatLineRound /></el-icon>
-          <template #title>知识问答</template>
+        <el-menu-item index="contest">
+          <el-icon>
+            <Medal />
+          </el-icon>
+          <template #title>竞赛</template>
         </el-menu-item>
-        
+
         <el-menu-item index="status">
-          <el-icon><Document /></el-icon>
+          <el-icon>
+            <Document />
+          </el-icon>
           <template #title>评测状态</template>
         </el-menu-item>
-        
-        <el-menu-item index="contest">
-          <el-icon><Medal /></el-icon>
-          <template #title>竞赛</template>
+
+        <el-menu-item index="qa">
+          <el-icon>
+            <ChatLineRound />
+          </el-icon>
+          <template #title>知识问答</template>
+        </el-menu-item>
+
+        <el-menu-item index="profile">
+          <el-icon>
+            <User />
+          </el-icon>
+          <template #title>我的信息</template>
         </el-menu-item>
       </el-menu>
     </el-scrollbar>
@@ -44,7 +51,7 @@
 
 <script setup>
 import { computed } from 'vue'
-import { 
+import {
   HomeFilled,
   User,
   List,
@@ -70,7 +77,8 @@ const sidebarWidth = computed(() => {
   background-color: #fff;
   /* 移除了黑色阴影效果 */
   transition: all 0.3s;
-  height: calc(100vh - 60px); /* 减去header的高度 */
+  height: calc(100vh - 60px);
+  /* 减去header的高度 */
 }
 
 .sidebar.collapsed {

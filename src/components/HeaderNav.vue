@@ -16,7 +16,7 @@
       <el-dropdown placement="bottom-end">
         <div class="user-info">
           <el-avatar :size="40" :src="avatarUrl" class="avatar" />
-          <span class="username">{{ userInfo.username }}</span>
+          <span class="username">{{ userInfo.username || '用户' }}</span>
           <el-icon class="ml-4"><ArrowDown /></el-icon>
         </div>
         <template #dropdown>
@@ -34,8 +34,6 @@
 <script setup>
 import { ref } from 'vue'
 import { Fold, Expand, ArrowDown } from '@element-plus/icons-vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { useRouter } from 'vue-router'
 import avatarImg from '@/assets/img/zjoj.png'
 
 defineProps({
@@ -45,7 +43,6 @@ defineProps({
 
 defineEmits(['toggle-sidebar', 'view-profile', 'settings', 'logout'])
 
-const router = useRouter()
 // 使用本地图片，防止外部链接无法访问
 const avatarUrl = ref(avatarImg)
 </script>

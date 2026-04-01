@@ -5,7 +5,7 @@
       <el-header class="header-container">
         <HeaderNav 
           :sidebar-collapsed="sidebarCollapsed" 
-          :user-info="userInfo"
+          :user-info="authStore.user"
           @toggle-sidebar="toggleSidebar"
           @view-profile="goToPage('profile')"
           @settings="settings"
@@ -34,7 +34,7 @@
             <div class="content-area">
               <!-- 我的信息页面 -->
               <div v-if="currentPage === 'profile'" class="page-content">
-                <UserProfile :user-info="userInfo" />
+                <UserProfile :user-info="authStore.user" />
               </div>
 
               <!-- 题目列表页面 -->
@@ -82,20 +82,6 @@
                   </el-col>
                   
                   <el-col :span="6">
-                    <el-card class="info-card">
-                      <template #header>
-                        <div class="card-header">
-                          <span>快速导航</span>
-                        </div>
-                      </template>
-                      
-                      <div class="quick-links">
-                        <el-button type="primary" @click="goToPage('problems')" round class="quick-link-btn">题目列表</el-button>
-                        <el-button type="success" @click="goToPage('qa')" round class="quick-link-btn">知识问答</el-button>
-                        <el-button type="warning" @click="goToContest" round class="quick-link-btn">参加竞赛</el-button>
-                      </div>
-                    </el-card>
-                    
                     <el-card class="news-card">
                       <template #header>
                         <div class="card-header">
@@ -127,8 +113,10 @@ import Sidebar from '@/components/Sidebar.vue'
 import UserProfile from '@/components/UserProfile.vue'
 import ProblemList from '@/components/ProblemList.vue'
 import KnowledgeQA from '@/components/KnowledgeQA.vue'
+import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
+const authStore = useAuthStore()
 
 // 侧边栏状态
 const sidebarCollapsed = ref(false)
@@ -137,18 +125,6 @@ const sidebarCollapsed = ref(false)
 const currentPage = ref('home')
 const activeMenu = ref('home')
 const activeBreadcrumb = ref('首页')
-
-// 用户信息
-const userInfo = ref({
-  username: 'testuser',
-  nickname: '测试用户',
-  email: 'test@example.com',
-  joinDate: '2023-01-01',
-  solvedProblems: 15,
-  submissions: 32,
-  rating: 1500,
-  signature: '努力刷题中...'
-})
 
 // 最近提交
 const recentSubmissions = ref([
@@ -217,8 +193,8 @@ const logout = () => {
       type: 'warning',
     }
   ).then(() => {
-    // 这里应该调用实际的登出逻辑
-    localStorage.removeItem('token')
+    // 调用 auth store 的清除方法
+    authStore.clearUserToken()
     router.push('/login')
     ElMessage.success('已退出登录')
   }).catch(() => {
@@ -273,10 +249,6 @@ const getResultType = (result) => {
   padding: 20px;
 }
 
-.info-card {
-  margin-bottom: 20px;
-}
-
 .card-header {
   display: flex;
   justify-content: space-between;
@@ -291,22 +263,6 @@ const getResultType = (result) => {
 
 .welcome-card h2 {
   margin-top: 0;
-}
-
-.quick-links {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 10px 0;
-}
-
-.quick-link-btn {
-  width: 100% !important;
-  margin-bottom: 12px;
-}
-
-.quick-link-btn:last-child {
-  margin-bottom: 0;
 }
 
 .news-list {

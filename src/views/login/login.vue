@@ -1,12 +1,13 @@
 <script setup name="login">
 import img_zjoj from "@/assets/img/zjoj.png"
-import { reactive, ref } from "vue"
+import {reactive, ref} from "vue"
+import axios from "axios"
+import { useAuthStore } from "@/stores/auth" 
 import { useRouter } from "vue-router"
-import { ElMessage } from "element-plus"
-import { useAuthrStore } from "@/stores/auth" 
 import authHttp from "@/api/authHttp"
+import { ElMessage } from 'element-plus'
 
-const authStore = useAuthrStore()
+const authStore = useAuthStore()
 const router = useRouter()
 const formRef = ref(null)
 const loading = ref(false)
@@ -30,18 +31,30 @@ const onSubmit = async () => {
   }
   
   loading.value = true
-  
   try {
     const res = await authHttp.login(form_login.username, form_login.password)
     let data = res.data
+    
     let token = data.token
     let user = data.user
+  
     authStore.setUserToken(user, token)
     ElMessage.success("登录成功")
     router.push({ name: "frame" })
+    
   } catch (err) {
-    ElMessage.error("登录失败：" +err.response.data.detail)
-    console.log("登录失败：" +err.response.data.detail)
+    let errorMsg = "登录失败"
+    if (err.response && err.response.data) {
+      if (err.response.data.detail) {
+        errorMsg += "：" + err.response.data.detail
+      } else if (err.response.data.error) {
+        errorMsg += "：" + err.response.data.error
+      } else {
+        errorMsg += "：请检查用户名和密码"
+      }
+    }
+    ElMessage.error(errorMsg)
+    console.log("登录失败：", err)
   } finally {
     loading.value = false
   }
@@ -89,7 +102,7 @@ const onSubmit = async () => {
             placeholder="请输入密码" 
             class="input-field" 
             v-model="form_login.password"
-            size="large"
+            size=" large"
             show-password
           />
         </el-form-item>
