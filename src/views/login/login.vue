@@ -18,7 +18,7 @@ let form_login = reactive({
 
 const onSubmit = async () => {
   let usernameRex = /^[0-9a-zA-Z_-]{2,20}$/
-  let pwdRgx = /^[0-9a-zA-Z_-]{2,20}$/
+  let pwdRgx = /^[0-9a-zA-Z_-]{6,20}$/
   
   if (!usernameRex.test(form_login.username)) {
     ElMessage.warning("用户名格式错误")
@@ -40,8 +40,8 @@ const onSubmit = async () => {
     ElMessage.success("登录成功")
     router.push({ name: "frame" })
   } catch (err) {
-    ElMessage.error("登录失败：" + err.message)
-    console.log(err)
+    ElMessage.error("登录失败：" +err.response.data.detail)
+    console.log("登录失败：" +err.response.data.detail)
   } finally {
     loading.value = false
   }
