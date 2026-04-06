@@ -1,68 +1,74 @@
-<script setup name="login">
-import {reactive, ref} from "vue"
-import { useAuthStore } from "@/stores/auth" 
+<script setup>
+import { reactive, ref } from "vue"
 import { useRouter } from "vue-router"
 import authHttp from "@/api/authHttp"
 import { ElMessage } from 'element-plus'
+import { useAuthStore } from "@/stores/auth"
 import AuthContainer from '@/components/AuthContainer.vue'
 
-const authStore = useAuthStore()
 const router = useRouter()
+const authStore = useAuthStore()
 const formRef = ref(null)
 const loading = ref(false)
 
-let form_login = reactive({
+let form_register = reactive({
   username: "",
-  password: ""
+  password: "",
+  confirmPassword: ""
 })
 
 const onSubmit = async () => {
   let usernameRex = /^[0-9a-zA-Z_-]{2,20}$/
   let pwdRgx = /^[0-9a-zA-Z_-]{6,20}$/
   
-  if (!usernameRex.test(form_login.username)) {
-    ElMessage.warning("用户名格式错误")
+  if (!usernameRex.test(form_register.username)) {
+    ElMessage.warning("用户名格式错误：2-20位字母、数字、下划线或横线")
     return
   }
-  if (!pwdRgx.test(form_login.password)) {
-    ElMessage.warning("密码格式错误")
+  if (!pwdRgx.test(form_register.password)) {
+    ElMessage.warning("密码格式错误：6-20位字母、数字、下划线或横线")
+    return
+  }
+  if (form_register.password !== form_register.confirmPassword) {
+    ElMessage.warning("两次输入的密码不一致")
     return
   }
   
   loading.value = true
   try {
-    const res = await authHttp.login(form_login.username, form_login.password)
+    const res = await authHttp.register(form_register.username, form_register.password)
     let data = res.data
     
-    let token = data.token
-    let user = data.user
-  
-    authStore.setUserToken(user, token)
-    ElMessage.success("登录成功")
-    router.push({ name: "frame" })
+    ElMessage.success("注册成功！请登录")
+    // 注册成功后跳转到登录页面
+    router.push({ name: "login" })
     
   } catch (err) {
-    let errorMsg = "登录失败"
+    let errorMsg = "注册失败"
     if (err.response && err.response.data) {
       if (err.response.data.detail) {
         errorMsg += "：" + err.response.data.detail
       } else if (err.response.data.error) {
         errorMsg += "：" + err.response.data.error
       } else {
-        errorMsg += "：请检查用户名和密码"
+        errorMsg += "：请检查输入信息"
       }
     }
     ElMessage.error(errorMsg)
-    console.log("登录失败：", err)
+    console.log("注册失败：", err)
   } finally {
     loading.value = false
   }
 }
+
+const goBackToLogin = () => {
+  router.push({ name: "login" })
+}
 </script>
 
 <template>
-  <AuthContainer title="欢迎回来" subtitle="请输入您的账号信息">
-    <el-form :model="form_login" ref="formRef" @keyup.enter="onSubmit">
+  <AuthContainer title="创建新账号" subtitle="填写以下信息完成注册">
+    <el-form :model="form_register" ref="formRef" @keyup.enter="onSubmit">
       <el-form-item class="form-item">
         <label class="custom-label">
           <span class="label-icon">👤</span>
@@ -70,9 +76,9 @@ const onSubmit = async () => {
         </label>
         <el-input 
           type="text" 
-          placeholder="请输入用户名" 
+          placeholder="请输入用户名（2-20位）" 
           class="input-field" 
-          v-model="form_login.username"
+          v-model="form_register.username"
           size="small"
         />
       </el-form-item>
@@ -84,9 +90,24 @@ const onSubmit = async () => {
         </label>
         <el-input 
           type="password" 
-          placeholder="请输入密码" 
+          placeholder="请输入密码（6-20位）" 
           class="input-field" 
-          v-model="form_login.password"
+          v-model="form_register.password"
+          size="small"
+          show-password
+        />
+      </el-form-item>
+
+      <el-form-item class="form-item">
+        <label class="custom-label">
+          <span class="label-icon">✅</span>
+          确认密码
+        </label>
+        <el-input 
+          type="password" 
+          placeholder="请再次输入密码" 
+          class="input-field" 
+          v-model="form_register.confirmPassword"
           size="small"
           show-password
         />
@@ -99,14 +120,12 @@ const onSubmit = async () => {
       :loading="loading"
       type="primary"
     >
-      <span class="btn-text">登 录</span>
+      <span class="btn-text">注 册</span>
       <span class="btn-shine"></span>
     </el-button>
 
     <div class="extra-links">
-      <a href="#" class="link-item">忘记密码？</a>
-      <span class="divider">|</span>
-      <router-link to="/register" class="link-item">注册新账号</router-link>
+      <a href="#" class="link-item" @click.prevent="goBackToLogin">已有账号？立即登录</a>
     </div>
   </AuthContainer>
 </template>
@@ -116,10 +135,6 @@ const onSubmit = async () => {
   margin-bottom: 12px;
   text-align: left;
   position: relative;
-}
-
-.form-item :deep(.el-form-item__content) {
-  display: block;
 }
 
 .custom-label {
@@ -207,7 +222,7 @@ const onSubmit = async () => {
   pointer-events: none;
 }
 
-.auth-btn:hover .btn-shine {
+.register-btn:hover .btn-shine {
   left: 100%;
 }
 
@@ -245,10 +260,5 @@ const onSubmit = async () => {
 
 .link-item:hover::after {
   width: 100%;
-}
-
-.divider {
-  color: #cbd5e0;
-  user-select: none;
 }
 </style>
