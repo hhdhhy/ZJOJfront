@@ -241,8 +241,16 @@ const handleSend = async () => {
     await fetchUsageStats()
     scrollToBottom()
   } catch (error) {
-    ElMessage.error(error.response?.data?.detail || 'AI回答失败')
-    console.error(error)
+    let errorMsg = 'AI回答失败'
+    if (error.code === 'ECONNABORTED') {
+      errorMsg = '请求超时，请检查网络连接或稍后重试'
+    } else if (error.response?.data?.detail) {
+      errorMsg = error.response.data.detail
+    } else if (error.message) {
+      errorMsg = error.message
+    }
+    ElMessage.error(errorMsg)
+    console.error('AI问答错误:', error)
   } finally {
     loading.value = false
   }
