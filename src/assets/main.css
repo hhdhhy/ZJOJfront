@@ -1,19 +1,21 @@
 @import './base.css';
 
 /* 移除Element Plus卡片默认阴影 */
+.el-card,
 .el-card.is-always-shadow,
 .el-card.is-hover-shadow:focus,
 .el-card.is-hover-shadow:hover {
-  box-shadow: none !important;
-}
-
-.el-card {
   box-shadow: none !important;
   border: 1px solid #dcdfe6;
 }
 
 .el-card__header {
   border-bottom: 1px solid #ebeef5;
+}
+
+/* 确保所有可能的阴影都被移除 */
+*[style*="box-shadow"] {
+  box-shadow: none !important;
 }
 
 #app {
