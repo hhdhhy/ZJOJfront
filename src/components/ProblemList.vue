@@ -73,7 +73,7 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="200" fixed="right">
+      <el-table-column label="操作" width="280" fixed="right">
         <template #default="scope">
           <el-button 
             size="small" 
@@ -81,6 +81,13 @@
             @click="submitProblem(scope.row)"
           >
             提交
+          </el-button>
+          <el-button 
+            size="small" 
+            type="success"
+            @click="uploadTestcase(scope.row.problem_id)"
+          >
+            上传用例
           </el-button>
           <el-button 
             size="small" 
@@ -176,6 +183,11 @@ const viewProblemDetail = (problemId) => {
 const submitProblem = (problem) => {
   ElMessage.info(`准备提交题目: ${problem.title}`)
   // TODO: 跳转到代码提交页面
+}
+
+// 上传测试用例
+const uploadTestcase = (problemId) => {
+  emit('upload-testcase', problemId)
 }
 
 // 删除题目

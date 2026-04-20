@@ -39,7 +39,10 @@
 
               <!-- 题目列表页面 -->
               <div v-if="currentPage === 'problems'" class="page-content">
-                <ProblemList @view-detail="handleViewProblemDetail" />
+                <ProblemList 
+                  @view-detail="handleViewProblemDetail" 
+                  @upload-testcase="handleUploadTestcase"
+                />
               </div>
 
               <!-- 创建题目页面 -->
@@ -220,6 +223,12 @@ const goToContest = () => {
 const handleViewProblemDetail = (problemId) => {
   currentProblemId.value = problemId
   goToPage('problem-detail')
+}
+
+// 处理上传测试用例
+const handleUploadTestcase = (problemId) => {
+  currentProblemId.value = problemId
+  goToPage('upload-testcases')
 }
 
 // 处理题目创建成功
