@@ -75,6 +75,23 @@
                 <KnowledgeQA />
               </div>
 
+              <!-- 评测状态页面 -->
+              <div v-if="currentPage === 'status'" class="page-content">
+                <SubmissionList 
+                  @view-detail="handleViewSubmissionDetail"
+                  @view-problem="handleViewProblemFromSubmission"
+                />
+              </div>
+
+              <!-- 提交详情页面 -->
+              <div v-if="currentPage === 'submission-detail'" class="page-content">
+                <SubmissionDetail 
+                  :submission-id="currentSubmissionId"
+                  @go-back="handleSubmissionDetailGoBack"
+                  @view-problem="handleViewProblemFromSubmission"
+                />
+              </div>
+
               <!-- 默认首页 -->
               <div v-if="currentPage === 'home'" class="page-content">
                 <el-row :gutter="20">
@@ -144,6 +161,8 @@ import ProblemCreate from '@/components/ProblemCreate.vue'
 import TestcaseUpload from '@/components/TestcaseUpload.vue'
 import ProblemDetail from '@/components/ProblemDetail.vue'
 import ProblemEdit from '@/components/ProblemEdit.vue'
+import SubmissionList from '@/components/SubmissionList.vue'
+import SubmissionDetail from '@/components/SubmissionDetail.vue'
 import KnowledgeQA from '@/components/KnowledgeQA.vue'
 import { useAuthStore } from '@/stores/auth'
 
@@ -158,6 +177,7 @@ const currentPage = ref('home')
 const activeMenu = ref('home')
 const activeBreadcrumb = ref('首页')
 const currentProblemId = ref('')
+const currentSubmissionId = ref('')
 
 // 最近提交
 const recentSubmissions = ref([
@@ -215,6 +235,9 @@ const goToPage = (page) => {
       break
     case 'status':
       activeBreadcrumb.value = '评测状态'
+      break
+    case 'submission-detail':
+      activeBreadcrumb.value = '提交详情'
       break
     case 'contest':
       activeBreadcrumb.value = '竞赛'
@@ -286,6 +309,23 @@ const handleProblemEditGoBack = () => {
 // 处理题目更新成功
 const handleUpdateSuccess = (updatedProblem) => {
   // 可以选择刷新详情页或直接返回
+  goToPage('problem-detail')
+}
+
+// 处理查看提交详情
+const handleViewSubmissionDetail = (submissionId) => {
+  currentSubmissionId.value = submissionId
+  goToPage('submission-detail')
+}
+
+// 处理提交详情页面返回
+const handleSubmissionDetailGoBack = () => {
+  goToPage('status')
+}
+
+// 从提交页面跳转到题目
+const handleViewProblemFromSubmission = (problemId) => {
+  currentProblemId.value = problemId
   goToPage('problem-detail')
 }
 
