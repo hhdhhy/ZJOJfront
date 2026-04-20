@@ -167,8 +167,7 @@ const viewProblemDetail = (problemId) => {
 
 // 提交代码
 const submitProblem = (problem) => {
-  ElMessage.info(`准备提交题目: ${problem.title}`)
-  // TODO: 跳转到代码提交页面
+  emit('view-detail', problem.problem_id)
 }
 
 // 上传测试用例
