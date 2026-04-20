@@ -39,7 +39,35 @@
 
               <!-- 题目列表页面 -->
               <div v-if="currentPage === 'problems'" class="page-content">
-                <ProblemList />
+                <ProblemList @view-detail="handleViewProblemDetail" />
+              </div>
+
+              <!-- 创建题目页面 -->
+              <div v-if="currentPage === 'create-problem'" class="page-content">
+                <ProblemCreate @create-success="handleCreateSuccess" />
+              </div>
+
+              <!-- 测试用例上传页面 -->
+              <div v-if="currentPage === 'upload-testcases'" class="page-content">
+                <TestcaseUpload :problem-id="currentProblemId" @go-back="handleTestcaseGoBack" />
+              </div>
+
+              <!-- 题目详情页面 -->
+              <div v-if="currentPage === 'problem-detail'" class="page-content">
+                <ProblemDetail 
+                  :problem-id="currentProblemId" 
+                  @go-back="handleProblemDetailGoBack"
+                  @edit-problem="handleEditProblem"
+                />
+              </div>
+
+              <!-- 题目编辑页面 -->
+              <div v-if="currentPage === 'problem-edit'" class="page-content">
+                <ProblemEdit 
+                  :problem-id="currentProblemId" 
+                  @go-back="handleProblemEditGoBack"
+                  @update-success="handleUpdateSuccess"
+                />
               </div>
 
               <!-- 知识问答页面 -->
@@ -112,6 +140,10 @@ import HeaderNav from '@/components/HeaderNav.vue'
 import Sidebar from '@/components/Sidebar.vue'
 import UserProfile from '@/components/UserProfile.vue'
 import ProblemList from '@/components/ProblemList.vue'
+import ProblemCreate from '@/components/ProblemCreate.vue'
+import TestcaseUpload from '@/components/TestcaseUpload.vue'
+import ProblemDetail from '@/components/ProblemDetail.vue'
+import ProblemEdit from '@/components/ProblemEdit.vue'
 import KnowledgeQA from '@/components/KnowledgeQA.vue'
 import { useAuthStore } from '@/stores/auth'
 
@@ -125,6 +157,7 @@ const sidebarCollapsed = ref(false)
 const currentPage = ref('home')
 const activeMenu = ref('home')
 const activeBreadcrumb = ref('首页')
+const currentProblemId = ref('')
 
 // 最近提交
 const recentSubmissions = ref([
@@ -165,6 +198,18 @@ const goToPage = (page) => {
     case 'problems':
       activeBreadcrumb.value = '题目列表'
       break
+    case 'create-problem':
+      activeBreadcrumb.value = '创建题目'
+      break
+    case 'upload-testcases':
+      activeBreadcrumb.value = '上传测试用例'
+      break
+    case 'problem-detail':
+      activeBreadcrumb.value = '题目详情'
+      break
+    case 'problem-edit':
+      activeBreadcrumb.value = '编辑题目'
+      break
     case 'qa':
       activeBreadcrumb.value = '知识问答'
       break
@@ -195,7 +240,7 @@ const logout = () => {
   ).then(() => {
     // 调用 auth store 的清除方法
     authStore.clearUserToken()
-    router.push('/login')
+    router.push({name: 'login'})
     ElMessage.success('已退出登录')
   }).catch(() => {
     // 取消
@@ -204,6 +249,44 @@ const logout = () => {
 
 const goToContest = () => {
   ElMessage.info('即将开放竞赛功能')
+}
+
+// 处理查看题目详情
+const handleViewProblemDetail = (problemId) => {
+  currentProblemId.value = problemId
+  goToPage('problem-detail')
+}
+
+// 处理题目创建成功
+const handleCreateSuccess = (problemId) => {
+  currentProblemId.value = problemId
+  goToPage('upload-testcases')
+}
+
+// 处理测试用例页面返回
+const handleTestcaseGoBack = () => {
+  goToPage('problems')
+}
+
+// 处理题目详情页面返回
+const handleProblemDetailGoBack = () => {
+  goToPage('problems')
+}
+
+// 处理编辑题目
+const handleEditProblem = () => {
+  goToPage('problem-edit')
+}
+
+// 处理题目编辑页面返回
+const handleProblemEditGoBack = () => {
+  goToPage('problem-detail')
+}
+
+// 处理题目更新成功
+const handleUpdateSuccess = (updatedProblem) => {
+  // 可以选择刷新详情页或直接返回
+  goToPage('problem-detail')
 }
 
 // 提交结果类型

@@ -17,6 +17,13 @@
           <template #title>题目列表</template>
         </el-menu-item>
         
+        <el-menu-item index="create-problem">
+          <el-icon>
+            <Plus />
+          </el-icon>
+          <template #title>创建题目</template>
+        </el-menu-item>
+        
         <el-menu-item index="contest">
           <el-icon>
             <Medal />
@@ -57,7 +64,8 @@ import {
   List,
   ChatLineRound,
   Document,
-  Medal
+  Medal,
+  Plus
 } from '@element-plus/icons-vue'
 
 const props = defineProps({

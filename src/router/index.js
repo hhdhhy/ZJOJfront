@@ -29,18 +29,22 @@ const router = createRouter({
 router.beforeEach((to, from) => {
   const authStore = useAuthStore()
   
-  // 如果目标路由是登录页或注册页，直接放行
-  if (to.name === 'login' || to.name === 'register') {
-    return
-  }
-  
-  // 检查用户是否已登录（是否有 token）
-  if (authStore.token) {
-    // 已登录，允许访问
+  // 如果用户已登录
+  if (authStore.is_login) {
+    // 如果目标是登录或注册页，则重定向到主页
+    if (to.name === 'login' || to.name === 'register') {
+      return { name: 'frame' }
+    }
+    // 已登录且目标不是登录/注册页，直接放行
     return
   } else {
-    // 未登录，重定向到登录页
-    return { name: 'login' }
+    // 用户未登录
+    // 如果目标是需要认证的页面（非登录/注册），则重定向到登录页
+    if (to.name !== 'login' && to.name !== 'register') {
+      return { name: 'login' }
+    }
+    // 目标是登录或注册页，直接放行
+    return
   }
 })
 

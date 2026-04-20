@@ -14,12 +14,15 @@ const loading = ref(false)
 let form_register = reactive({
   username: "",
   password: "",
-  confirmPassword: ""
+  confirmPassword: "",
+  email: "",
+  realname: ""
 })
 
 const onSubmit = async () => {
   let usernameRex = /^[0-9a-zA-Z_-]{2,20}$/
   let pwdRgx = /^[0-9a-zA-Z_-]{6,20}$/
+  let emailRex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   
   if (!usernameRex.test(form_register.username)) {
     ElMessage.warning("用户名格式错误：2-20位字母、数字、下划线或横线")
@@ -33,10 +36,24 @@ const onSubmit = async () => {
     ElMessage.warning("两次输入的密码不一致")
     return
   }
+  if (!emailRex.test(form_register.email)) {
+    ElMessage.warning("请输入有效的邮箱地址")
+    return
+  }
+  if (!form_register.realname.trim()) {
+    ElMessage.warning("请输入真实姓名")
+    return
+  }
   
   loading.value = true
   try {
-    const res = await authHttp.register(form_register.username, form_register.password)
+    // 使用 authHttp.post 直接调用 API
+    const res = await authHttp.post('/api/register/', {
+      username: form_register.username,
+      password: form_register.password,
+      email: form_register.email,
+      realname: form_register.realname
+    })
     let data = res.data
     
     ElMessage.success("注册成功！请登录")
@@ -110,6 +127,34 @@ const goBackToLogin = () => {
           v-model="form_register.confirmPassword"
           size="small"
           show-password
+        />
+      </el-form-item>
+
+      <el-form-item class="form-item">
+        <label class="custom-label">
+          <span class="label-icon">📧</span>
+          邮箱
+        </label>
+        <el-input 
+          type="email" 
+          placeholder="请输入邮箱地址" 
+          class="input-field" 
+          v-model="form_register.email"
+          size="small"
+        />
+      </el-form-item>
+
+      <el-form-item class="form-item">
+        <label class="custom-label">
+          <span class="label-icon">📛</span>
+          真实姓名
+        </label>
+        <el-input 
+          type="text" 
+          placeholder="请输入您的真实姓名" 
+          class="input-field" 
+          v-model="form_register.realname"
+          size="small"
         />
       </el-form-item>
     </el-form>

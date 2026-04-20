@@ -41,6 +41,12 @@ export const useAuthStore = defineStore('auth', () => {
         return _token.value
     })
 
+    let is_login = computed(() => {
+        if(Object.keys(user.value).length > 0&& token.value)
+            return true
+        else
+            return false
+    })
     // 清除用户信息
     function clearUserToken() {
         _user.value = {}
@@ -50,5 +56,5 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     // 返回以让外界访问
-    return { setUserToken, clearUserToken, user, token }
+    return { setUserToken, clearUserToken, user, token, is_login }
 })

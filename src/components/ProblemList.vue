@@ -1,93 +1,209 @@
 <template>
-  <el-card>
+  <el-card class="problem-list-card">
     <template #header>
       <div class="card-header">
-        <span>题目列表</span>
-        <el-input
-          v-model="problemFilter"
-          placeholder="搜索题目..."
-          style="width: 200px;"
-          clearable
-        />
+        <span class="card-title">📚 题目列表</span>
+        <div class="search-container">
+          <el-select 
+            v-model="selectedTag" 
+            placeholder="选择标签" 
+            clearable 
+            style="width: 150px; margin-right: 10px;"
+            @change="fetchProblems"
+          >
+            <el-option 
+              v-for="tag in tags" 
+              :key="tag.id" 
+              :label="tag.name" 
+              :value="tag.id"
+            />
+          </el-select>
+          <el-input
+            v-model="searchTitle"
+            placeholder="搜索题目标题..."
+            style="width: 200px;"
+            clearable
+            @input="debouncedSearch"
+          />
+        </div>
       </div>
     </template>
     
-    <el-table :data="filteredProblems" style="width: 100%" stripe>
-      <el-table-column prop="id" label="ID" width="100" />
-      <el-table-column prop="title" label="标题" />
-      <el-table-column prop="difficulty" label="难度" width="120">
+    <el-skeleton v-if="loading" :rows="5" animated />
+    
+    <el-table 
+      v-else 
+      :data="problems" 
+      style="width: 100%" 
+      stripe
+      empty-text="暂无题目数据"
+    >
+      <el-table-column prop="problem_id" label="题目ID" width="120" />
+      <el-table-column prop="title" label="题目标题" min-width="200">
         <template #default="scope">
-          <el-tag 
-            :type="getDifficultyTag(scope.row.difficulty)" 
-            disable-transitions
+          <el-link 
+            type="primary" 
+            @click="viewProblemDetail(scope.row.problem_id)"
+            style="cursor: pointer;"
           >
-            {{ scope.row.difficulty }}
-          </el-tag>
+            {{ scope.row.title }}
+          </el-link>
         </template>
       </el-table-column>
-      <el-table-column prop="acceptanceRate" label="通过率" width="120" />
+      <el-table-column prop="time_limit" label="时间限制" width="120">
+        <template #default="scope">
+          {{ scope.row.time_limit }}ms
+        </template>
+      </el-table-column>
+      <el-table-column prop="memory_limit" label="内存限制" width="120">
+        <template #default="scope">
+          {{ scope.row.memory_limit }}MB
+        </template>
+      </el-table-column>
       <el-table-column prop="tags" label="标签" width="200">
         <template #default="scope">
           <el-tag 
             v-for="tag in scope.row.tags" 
-            :key="tag" 
+            :key="tag.id" 
             size="small" 
-            style="margin-right: 5px;"
+            style="margin-right: 5px; margin-bottom: 5px;"
           >
-            {{ tag }}
+            {{ tag.name }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="150">
+      <el-table-column label="操作" width="150" fixed="right">
         <template #default="scope">
-          <el-button size="small" @click="viewProblem(scope.row)">查看</el-button>
-          <el-button size="small" type="primary">提交</el-button>
+          <el-button 
+            size="small" 
+            type="primary"
+            @click="submitProblem(scope.row)"
+          >
+            提交
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
+    
+    <!-- 分页组件（如果需要） -->
+    <!-- <div class="pagination-container" v-if="!loading && problems.length > 0">
+      <el-pagination
+        v-model:current-page="currentPage"
+        v-model:page-size="pageSize"
+        :total="total"
+        layout="total, prev, pager, next, jumper"
+        @current-change="handlePageChange"
+      />
+    </div> -->
   </el-card>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
+import authHttp from '@/api/authHttp'
 
-// 题目列表
-const problemFilter = ref('')
-const problems = ref([
-  { id: 1, title: '两数之和', difficulty: '简单', acceptanceRate: '65%', tags: ['数组', '哈希表'] },
-  { id: 2, title: '三数之和', difficulty: '中等', acceptanceRate: '32%', tags: ['数组', '双指针'] },
-  { id: 3, title: '最长不重复子串', difficulty: '中等', acceptanceRate: '41%', tags: ['字符串', '滑动窗口'] },
-  { id: 4, title: '合并K个排序链表', difficulty: '困难', acceptanceRate: '28%', tags: ['链表', '分治'] },
-  { id: 5, title: '二叉树遍历', difficulty: '中等', acceptanceRate: '55%', tags: ['树', '深度优先搜索'] },
-])
-
-// 计算属性
-const filteredProblems = computed(() => {
-  if (!problemFilter.value) return problems.value
-  return problems.value.filter(problem => 
-    problem.title.toLowerCase().includes(problemFilter.value.toLowerCase()) ||
-    problem.tags.some(tag => tag.toLowerCase().includes(problemFilter.value.toLowerCase()))
-  )
+const props = defineProps({
+  // 可能需要接收父组件的方法
 })
 
-// 方法
-const viewProblem = (problem) => {
-  ElMessage.info(`查看题目: ${problem.title}`)
+const emit = defineEmits(['view-detail'])
+
+// 响应式数据
+const problems = ref([])
+const tags = ref([])
+const loading = ref(true)
+const searchTitle = ref('')
+const selectedTag = ref(null)
+
+// 防抖搜索
+let searchTimer = null
+const debouncedSearch = () => {
+  clearTimeout(searchTimer)
+  searchTimer = setTimeout(() => {
+    fetchProblems()
+  }, 300)
 }
 
-// 题目难度标签类型
-const getDifficultyTag = (difficulty) => {
-  if (difficulty === '简单') return 'success'
-  if (difficulty === '困难') return 'danger'
-  return 'warning'
+// 获取标签列表
+const fetchTags = async () => {
+  try {
+    const res = await authHttp.get('/api/problems/tags/')
+    tags.value = res.data
+  } catch (error) {
+    console.error('获取标签列表失败:', error)
+    // 即使标签获取失败，也要继续获取题目列表
+  }
 }
+
+// 获取题目列表
+const fetchProblems = async () => {
+  loading.value = true
+  try {
+    const params = {}
+    if (searchTitle.value) {
+      params.title = searchTitle.value
+    }
+    if (selectedTag.value) {
+      params.tag_id = selectedTag.value
+    }
+    
+    const res = await authHttp.get('/api/problems/', { params })
+    problems.value = res.data
+  } catch (error) {
+    ElMessage.error('获取题目列表失败')
+    console.error(error)
+    problems.value = []
+  } finally {
+    loading.value = false
+  }
+}
+
+// 查看题目详情
+const viewProblemDetail = (problemId) => {
+  emit('view-detail', problemId)
+}
+
+// 提交代码
+const submitProblem = (problem) => {
+  ElMessage.info(`准备提交题目: ${problem.title}`)
+  // TODO: 跳转到代码提交页面
+}
+
+// 初始化
+onMounted(() => {
+  fetchTags()
+  fetchProblems()
+})
 </script>
 
 <style scoped>
+.problem-list-card {
+  margin: 20px;
+}
+
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #303133;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pagination-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
 }
 </style>

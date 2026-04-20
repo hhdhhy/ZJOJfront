@@ -31,7 +31,8 @@ const onSubmit = async () => {
   
   loading.value = true
   try {
-    const res = await authHttp.login(form_login.username, form_login.password)
+    // 使用 authHttp.post 直接调用 API
+    const res = await authHttp.post('/api/login/', form_login)
     let data = res.data
     
     let token = data.token
