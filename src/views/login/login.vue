@@ -66,7 +66,7 @@ const onSubmit = async () => {
     <el-form :model="form_login" ref="formRef" @keyup.enter="onSubmit">
       <el-form-item class="form-item">
         <label class="custom-label">
-          <span class="label-icon">👤</span>
+          <span class="label-icon"></span>
           用户名
         </label>
         <el-input 

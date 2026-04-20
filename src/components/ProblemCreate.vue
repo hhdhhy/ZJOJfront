@@ -2,7 +2,7 @@
   <el-card class="problem-create-card">
     <template #header>
       <div class="card-header">
-        <span class="card-title">📝 创建新题目</span>
+        <span class="card-title">创建新题目</span>
       </div>
     </template>
     

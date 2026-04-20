@@ -2,7 +2,7 @@
   <el-card class="testcase-upload-card">
     <template #header>
       <div class="card-header">
-        <span class="card-title">📤 上传测试用例</span>
+        <span class="card-title">上传测试用例</span>
         <el-button 
           type="primary" 
           size="small"

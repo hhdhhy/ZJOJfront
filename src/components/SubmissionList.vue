@@ -2,7 +2,7 @@
   <el-card class="submission-list-card">
     <template #header>
       <div class="card-header">
-        <span class="card-title">📊 评测状态</span>
+        <span class="card-title">评测状态</span>
         <div class="filter-container">
           <el-select 
             v-model="filterProblemId" 

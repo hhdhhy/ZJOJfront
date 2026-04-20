@@ -71,7 +71,7 @@
       
       <!-- 题目描述 -->
       <div class="problem-description">
-        <h3>📝 题目描述</h3>
+        <h3>题目描述</h3>
         <div 
           class="markdown-content" 
           v-html="renderMarkdown(problemData.description)"

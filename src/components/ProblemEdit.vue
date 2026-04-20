@@ -2,7 +2,7 @@
   <el-card class="problem-edit-card">
     <template #header>
       <div class="card-header">
-        <span class="card-title">✏️ 编辑题目 - {{ problemData.problem_id }}</span>
+        <span class="card-title">编辑题目 - {{ problemData.problem_id }}</span>
         <el-button 
           type="primary" 
           size="small"

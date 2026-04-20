@@ -2,7 +2,7 @@
   <el-card class="profile-card">
     <template #header>
       <div class="card-header">
-        <span class="card-title">👤 个人资料</span>
+        <span class="card-title">个人资料</span>
         <el-button 
           type="primary" 
           size="small"

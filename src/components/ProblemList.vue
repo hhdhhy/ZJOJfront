@@ -2,7 +2,7 @@
   <el-card class="problem-list-card">
     <template #header>
       <div class="card-header">
-        <span class="card-title">📚 题目列表</span>
+        <span class="card-title">题目列表</span>
         <div class="search-container">
           <el-select 
             v-model="selectedTag" 

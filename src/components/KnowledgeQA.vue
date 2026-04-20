@@ -6,7 +6,7 @@
         <el-card class="chat-card">
           <template #header>
             <div class="card-header">
-              <span class="card-title">🤖 AI智能问答</span>
+              <span class="card-title">AI智能问答</span>
               <el-button type="danger" size="small" @click="handleClearHistory" :loading="clearing">
                 清空历史
               </el-button>
@@ -26,7 +26,7 @@
               :class="{ 'user-message': msg.role === 'user', 'ai-message': msg.role === 'ai' }"
             >
               <div class="message-avatar">
-                {{ msg.role === 'user' ? '👤' : '🤖' }}
+                {{ msg.role === 'user' ? '用户' : 'AI' }}
               </div>
               <div class="message-content">
                 <div class="message-text" v-html="renderMarkdown(msg.content)"></div>
@@ -34,7 +34,7 @@
                 
                 <!-- AI回答的来源 -->
                 <div v-if="msg.sources && msg.sources.length > 0" class="message-sources">
-                  <div class="sources-title">📚 参考来源:</div>
+                  <div class="sources-title">参考来源:</div>
                   <el-tag 
                     v-for="(source, idx) in msg.sources" 
                     :key="idx"
@@ -49,7 +49,7 @@
             
             <!-- 加载中 -->
             <div v-if="loading" class="message-item ai-message">
-              <div class="message-avatar">🤖</div>
+              <div class="message-avatar">AI</div>
               <div class="message-content">
                 <el-skeleton :rows="2" animated />
               </div>
@@ -86,7 +86,7 @@
         <el-card class="stats-card">
           <template #header>
             <div class="card-header">
-              <span class="card-title">📊 使用情况</span>
+              <span class="card-title">使用情况</span>
             </div>
           </template>
           

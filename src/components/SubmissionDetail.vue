@@ -56,7 +56,7 @@
       
       <!-- 测试点结果 -->
       <div v-if="submissionData.test_case_results && submissionData.test_case_results.length > 0" class="test-results">
-        <h3>📋 测试点详情</h3>
+        <h3>测试点详情</h3>
         <el-table 
           :data="submissionData.test_case_results" 
           stripe
