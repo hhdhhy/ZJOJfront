@@ -196,7 +196,17 @@ onMounted(() => {
 
 <style scoped>
 .submission-list-card {
-  margin: 20px;
+  margin: 0;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border: none;
+  overflow: hidden;
+}
+
+.submission-list-card :deep(.el-card__header) {
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  padding: 20px 24px;
+  border-bottom: none;
 }
 
 .card-header {
@@ -207,9 +217,10 @@ onMounted(() => {
 }
 
 .card-title {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
-  color: #303133;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .filter-container {
@@ -218,11 +229,42 @@ onMounted(() => {
   gap: 10px;
 }
 
+:deep(.el-table) {
+  border-radius: 0;
+}
+
+:deep(.el-table th) {
+  background: linear-gradient(90deg, #f8f9fa 0%, #e9ecef 100%);
+  color: #495057;
+  font-weight: 600;
+  border-bottom: 2px solid #dee2e6;
+}
+
 :deep(.el-table__row) {
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 :deep(.el-table__row:hover) {
-  background-color: #f5f7fa;
+  background: linear-gradient(90deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+  transform: scale(1.002);
+}
+
+:deep(.el-tag) {
+  border-radius: 12px;
+  padding: 4px 12px;
+  font-weight: 500;
+}
+
+:deep(.el-button--primary) {
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+}
+
+:deep(.el-button--primary:hover) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 </style>

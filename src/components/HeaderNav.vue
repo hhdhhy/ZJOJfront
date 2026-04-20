@@ -52,9 +52,9 @@ const avatarUrl = ref(avatarImg)
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #fff;
-  padding: 0 20px;
-  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  padding: 0 24px;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
   z-index: 100;
   height: 60px;
 }
@@ -67,12 +67,21 @@ const avatarUrl = ref(avatarImg)
 .sidebar-toggle {
   margin-right: 15px;
   font-size: 18px;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.sidebar-toggle:hover {
+  transform: scale(1.1);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .logo {
-  font-size: 20px;
-  font-weight: bold;
-  color: #409EFF;
+  font-size: 24px;
+  font-weight: 700;
+  color: white;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  letter-spacing: 1px;
 }
 
 .nav-right {
@@ -84,17 +93,43 @@ const avatarUrl = ref(avatarImg)
   display: flex;
   align-items: center;
   cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.user-info:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .avatar {
   margin-right: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .username {
   margin-right: 8px;
+  color: white;
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .ml-4 {
   margin-left: 4px;
+  color: white;
+}
+
+:deep(.el-dropdown-menu__item) {
+  transition: all 0.2s ease;
+}
+
+:deep(.el-dropdown-menu__item:hover) {
+  background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  color: #667eea;
 }
 </style>
