@@ -3,6 +3,11 @@
 /* 移除Element Plus卡片默认阴影 */
 .el-card {
   box-shadow: none !important;
+  border: 1px solid #dcdfe6;
+}
+
+.el-card__header {
+  border-bottom: 1px solid #ebeef5;
 }
 
 #app {
