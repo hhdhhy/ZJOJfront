@@ -73,7 +73,7 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="280" fixed="right">
+      <el-table-column label="操作" width="120" fixed="right">
         <template #default="scope">
           <el-button 
             size="small" 
@@ -81,20 +81,6 @@
             @click="submitProblem(scope.row)"
           >
             提交
-          </el-button>
-          <el-button 
-            size="small" 
-            type="success"
-            @click="uploadTestcase(scope.row.problem_id)"
-          >
-            上传用例
-          </el-button>
-          <el-button 
-            size="small" 
-            type="danger"
-            @click="handleDeleteProblem(scope.row)"
-          >
-            删除
           </el-button>
         </template>
       </el-table-column>
