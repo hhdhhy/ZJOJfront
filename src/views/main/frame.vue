@@ -321,6 +321,10 @@ const handleViewProblemFromSubmission = (problemId) => {
   text-align: center;
 }
 
+.welcome-card :deep(.el-card__body) {
+  box-shadow: none !important;
+}
+
 .welcome-card h2 {
   margin-bottom: 16px;
   font-size: 24px;
