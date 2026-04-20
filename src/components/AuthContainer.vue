@@ -62,23 +62,15 @@ defineProps({
 }
 
 .auth-box {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  padding: 50px 40px;
-  border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3),
-    0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+  background: white;
+  padding: 40px;
+  border-radius: 4px;
+  border: 1px solid #dcdfe6;
   width: 100%;
   max-width: 420px;
   text-align: center;
-  transform: translateY(0);
-  transition: transform 0.3s ease;
   position: relative;
   z-index: 10;
-}
-
-.auth-box:hover {
-  transform: translateY(-5px);
 }
 
 .auth-header {
@@ -135,7 +127,6 @@ defineProps({
   height: 100px;
   background: linear-gradient(to top, #FF4500, #FF6347, #FFA500);
   border-radius: 50% 50% 0 0;
-  filter: drop-shadow(0 0 15px rgba(255, 69, 0, 0.8));
   animation: lavaFlow 5s infinite ease-in-out;
 }
 

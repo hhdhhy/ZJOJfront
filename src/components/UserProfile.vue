@@ -1,5 +1,5 @@
 <template>
-  <el-card class="profile-card" shadow="hover">
+  <el-card class="profile-card">
     <template #header>
       <div class="card-header">
         <span class="card-title">👤 个人资料</span>

@@ -1,5 +1,5 @@
 <template>
-  <el-card class="problem-detail-card" shadow="hover">
+  <el-card class="problem-detail-card">
     <template #header>
       <div class="card-header">
         <div class="problem-title">

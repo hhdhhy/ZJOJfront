@@ -143,9 +143,9 @@ const onSubmit = async () => {
 
 .input-field :deep(.el-input__wrapper) {
   padding: 6px 8px 6px 28px;
-  border-radius: 6px;
-  box-shadow: 0 0 0 1px #e2e8f0 inset;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 4px;
+  border: 1px solid #dcdfe6;
+  transition: all 0.3s;
   font-size: 12px;
   background: #fff;
 }
@@ -155,41 +155,33 @@ const onSubmit = async () => {
 }
 
 .input-field :deep(.el-input__wrapper):hover {
-  box-shadow: 0 0 0 1px #667eea inset;
+  border-color: #c0c4cc;
 }
 
 .input-field :deep(.el-input__wrapper.is-focus) {
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
-  transform: translateY(-2px);
+  border-color: #409eff;
 }
 
 .auth-btn {
   width: 100%;
-  padding: 16px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 12px;
+  background-color: #409eff;
   border: none;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 600;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s;
   margin-top: 10px;
-  position: relative;
-  overflow: hidden;
-  letter-spacing: 1px;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
   height: auto;
 }
 
 .auth-btn :deep(.el-button__text) {
-  position: relative;
-  z-index: 2;
+  color: white;
 }
 
 .auth-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-color: #66b1ff;
 }
 
 .auth-btn:active {
