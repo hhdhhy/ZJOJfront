@@ -6,15 +6,16 @@
         <div class="filter-container">
           <el-select 
             v-model="filterProblemId" 
-            placeholder="选择题目" 
+            placeholder="搜索题目" 
             clearable 
-            style="width: 150px; margin-right: 10px;"
+            filterable
+            style="width: 200px; margin-right: 10px;"
             @change="fetchSubmissions"
           >
             <el-option 
               v-for="problem in problemOptions" 
               :key="problem.problem_id" 
-              :label="problem.title" 
+              :label="`${problem.problem_id} - ${problem.title}`" 
               :value="problem.problem_id"
             />
           </el-select>

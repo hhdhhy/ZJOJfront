@@ -6,9 +6,10 @@
         <div class="search-container">
           <el-select 
             v-model="selectedTag" 
-            placeholder="选择标签" 
+            placeholder="搜索标签" 
             clearable 
-            style="width: 150px; margin-right: 10px;"
+            filterable
+            style="width: 180px; margin-right: 10px;"
             @change="fetchProblems"
           >
             <el-option 
