@@ -94,52 +94,10 @@
 
               <!-- 默认首页 -->
               <div v-if="currentPage === 'home'" class="page-content">
-                <el-row :gutter="20">
-                  <el-col :span="18">
-                    <el-card class="welcome-card">
-                      <h2>欢迎来到 ZJOJ 在线判题系统</h2>
-                      <p>在这里你可以练习编程技能，参与算法竞赛，提升编程能力。</p>
-                    </el-card>
-                    
-                    <el-card class="recent-card">
-                      <template #header>
-                        <div class="card-header">
-                          <span>最近提交</span>
-                        </div>
-                      </template>
-                      
-                      <el-table :data="recentSubmissions" style="width: 100%">
-                        <el-table-column prop="problem" label="题目" />
-                        <el-table-column prop="result" label="结果" width="120">
-                          <template #default="scope">
-                            <el-tag 
-                              :type="getResultType(scope.row.result)" 
-                              disable-transitions
-                            >
-                              {{ scope.row.result }}
-                            </el-tag>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="language" label="语言" width="100" />
-                        <el-table-column prop="time" label="时间" width="150" />
-                      </el-table>
-                    </el-card>
-                  </el-col>
-                  
-                  <el-col :span="6">
-                    <el-card class="news-card">
-                      <template #header>
-                        <div class="card-header">
-                          <span>系统公告</span>
-                        </div>
-                      </template>
-                      
-                      <ul class="news-list">
-                        <li v-for="news in newsList" :key="news.id">{{ news.title }}</li>
-                      </ul>
-                    </el-card>
-                  </el-col>
-                </el-row>
+                <el-card class="welcome-card">
+                  <h2>欢迎来到 ZJOJ 在线判题系统</h2>
+                  <p>在这里你可以练习编程技能，参与算法竞赛，提升编程能力。</p>
+                </el-card>
               </div>
             </div>
           </div>
@@ -178,22 +136,6 @@ const activeMenu = ref('home')
 const activeBreadcrumb = ref('首页')
 const currentProblemId = ref('')
 const currentSubmissionId = ref('')
-
-// 最近提交
-const recentSubmissions = ref([
-  { problem: '两数之和', result: '通过', language: 'Java', time: '2023-05-01 10:30' },
-  { problem: '三数之和', result: '编译错误', language: 'C++', time: '2023-05-01 09:15' },
-  { problem: '最长不重复子串', result: '通过', language: 'Python', time: '2023-04-30 22:45' },
-  { problem: '反转链表', result: '超时', language: 'Java', time: '2023-04-30 18:20' }
-])
-
-// 系统公告
-const newsList = ref([
-  { id: 1, title: '五一劳动节放假通知' },
-  { id: 2, title: '系统维护升级公告' },
-  { id: 3, title: '新增Python3.9支持' },
-  { id: 4, title: '周末编程挑战赛报名' }
-])
 
 // 方法
 const toggleSidebar = () => {
@@ -328,14 +270,6 @@ const handleViewProblemFromSubmission = (problemId) => {
   currentProblemId.value = problemId
   goToPage('problem-detail')
 }
-
-// 提交结果类型
-const getResultType = (result) => {
-  if (result === '通过') return 'success'
-  if (result === '编译错误') return 'danger'
-  if (result === '超时') return 'warning'
-  return 'info'
-}
 </script>
 
 <style scoped>
@@ -383,28 +317,19 @@ const getResultType = (result) => {
 }
 
 .welcome-card {
-  margin-bottom: 20px;
-  padding: 30px;
+  padding: 40px;
   text-align: center;
 }
 
 .welcome-card h2 {
-  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 24px;
+  color: #303133;
 }
 
-.news-list {
-  list-style: none;
-  padding: 0;
-}
-
-.news-list li {
-  padding: 5px 0;
-  border-bottom: 1px solid #eee;
+.welcome-card p {
+  margin: 0;
+  font-size: 16px;
   color: #606266;
-  font-size: 14px;
-}
-
-.news-list li:last-child {
-  border-bottom: none;
 }
 </style>
