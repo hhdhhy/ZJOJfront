@@ -3,7 +3,7 @@
     <el-row :gutter="20">
       <!-- 左侧聊天区域 -->
       <el-col :span="16">
-        <el-card class="chat-card">
+        <el-card class="chat-card" :shadow="'never'">
           <template #header>
             <div class="card-header">
               <span class="card-title">AI智能问答</span>
@@ -83,7 +83,7 @@
       
       <!-- 右侧统计信息 -->
       <el-col :span="8">
-        <el-card class="stats-card">
+        <el-card class="stats-card" :shadow="'never'">
           <template #header>
             <div class="card-header">
               <span class="card-title">使用情况</span>
@@ -122,7 +122,7 @@
           <el-skeleton v-else :rows="5" animated />
         </el-card>
         
-        <el-card class="tips-card" style="margin-top: 20px;">
+        <el-card class="tips-card" style="margin-top: 20px;" :shadow="'never'">
           <template #header>
             <div class="card-header">
               <span class="card-title">💡 使用提示</span>

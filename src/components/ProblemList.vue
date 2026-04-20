@@ -1,5 +1,5 @@
 <template>
-  <el-card class="problem-list-card">
+  <el-card class="problem-list-card" :shadow="'never'">
     <template #header>
       <div class="card-header">
         <span class="card-title">题目列表</span>

@@ -94,7 +94,7 @@
 
               <!-- 默认首页 -->
               <div v-if="currentPage === 'home'" class="page-content">
-                <el-card class="welcome-card">
+                <el-card class="welcome-card" :shadow="'never'">
                   <h2>欢迎来到 ZJOJ 在线判题系统</h2>
                   <p>在这里你可以练习编程技能，参与算法竞赛，提升编程能力。</p>
                 </el-card>

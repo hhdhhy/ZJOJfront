@@ -1,5 +1,5 @@
 <template>
-  <el-card class="problem-create-card">
+  <el-card class="problem-create-card" :shadow="'never'">
     <template #header>
       <div class="card-header">
         <span class="card-title">创建新题目</span>

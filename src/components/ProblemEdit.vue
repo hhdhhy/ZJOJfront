@@ -1,5 +1,5 @@
 <template>
-  <el-card class="problem-edit-card">
+  <el-card class="problem-edit-card" :shadow="'never'">
     <template #header>
       <div class="card-header">
         <span class="card-title">编辑题目 - {{ problemData.problem_id }}</span>

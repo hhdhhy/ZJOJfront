@@ -1,5 +1,5 @@
 <template>
-  <el-card class="submission-list-card">
+  <el-card class="submission-list-card" :shadow="'never'">
     <template #header>
       <div class="card-header">
         <span class="card-title">评测状态</span>

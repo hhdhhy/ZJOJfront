@@ -1,5 +1,5 @@
 <template>
-  <el-card class="testcase-upload-card">
+  <el-card class="testcase-upload-card" :shadow="'never'">
     <template #header>
       <div class="card-header">
         <span class="card-title">上传测试用例</span>
