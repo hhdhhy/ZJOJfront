@@ -94,7 +94,7 @@
         <el-form-item>
           <el-button 
             type="primary" 
-            @click="updateProblem" 
+            @click="handleUpdateProblem"
             :loading="updating"
             size="large"
           >
@@ -125,7 +125,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import authHttp from '@/api/authHttp'
+import { getProblemDetail, updateProblem, getTagList } from '@/api'
 
 const props = defineProps({
   problemId: {
@@ -177,8 +177,8 @@ const fetchProblemAndTags = async () => {
   try {
     // 并行获取题目详情和标签列表
     const [problemRes, tagsRes] = await Promise.all([
-      authHttp.get(`/api/problems/${props.problemId}/`),
-      authHttp.get('/api/problems/tags/')
+      getProblemDetail(props.problemId),
+      getTagList()
     ])
     
     problemData.value = problemRes.data
@@ -206,14 +206,14 @@ const goBack = () => {
 }
 
 // 更新题目
-const updateProblem = async () => {
+const handleUpdateProblem = async () => {
   if (!editFormRef.value) return
   
   await editFormRef.value.validate(async (valid) => {
     if (valid) {
       updating.value = true
       try {
-        const res = await authHttp.patch(`/api/problems/${props.problemId}/`, {
+        const res = await updateProblem(props.problemId, {
           title: editForm.value.title,
           description: editForm.value.description,
           time_limit: editForm.value.time_limit,

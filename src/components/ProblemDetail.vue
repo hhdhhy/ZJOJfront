@@ -9,6 +9,15 @@
         <div class="header-buttons">
           <el-button 
             v-if="isCreator"
+            type="warning" 
+            size="small"
+            @click="handleDeleteProblem"
+            style="margin-right: 10px;"
+          >
+            删除题目
+          </el-button>
+          <el-button 
+            v-if="isCreator"
             type="primary" 
             size="small"
             @click="editProblem"
@@ -131,10 +140,10 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { ElMessage } from 'element-plus'
+import { ref, computed, onMounted } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { marked } from 'marked'
-import authHttp from '@/api/authHttp'
+import { getProblemDetail, deleteProblem, submitCode as apiSubmitCode } from '@/api'
 import { useAuthStore } from '@/stores/auth'
 
 const props = defineProps({
@@ -180,7 +189,7 @@ const submitRules = {
 // 获取题目详情
 const fetchProblemDetail = async () => {
   try {
-    const res = await authHttp.get(`/api/problems/${props.problemId}/`)
+    const res = await getProblemDetail(props.problemId)
     problemData.value = res.data
   } catch (error) {
     ElMessage.error('获取题目详情失败')
@@ -241,6 +250,31 @@ const editProblem = () => {
   emit('edit-problem')
 }
 
+// 删除题目
+const handleDeleteProblem = async () => {
+  try {
+    await ElMessageBox.confirm(
+      `确定要删除题目 "${problemData.value.title}" 吗?此操作不可恢复!`,
+      '警告',
+      {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }
+    )
+    
+    await deleteProblem(props.problemId)
+    ElMessage.success('题目删除成功')
+    // 返回题目列表
+    emit('go-back')
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('删除题目失败:', error)
+      ElMessage.error(error.response?.data?.message || '删除题目失败')
+    }
+  }
+}
+
 // 提交代码
 const submitCode = async () => {
   if (!submitFormRef.value) return
@@ -249,7 +283,7 @@ const submitCode = async () => {
     if (valid) {
       submitting.value = true
       try {
-        const res = await authHttp.post('/api/submissions/submit/', {
+        const res = await apiSubmitCode({
           problem_id: props.problemId,
           language: submitForm.value.language,
           code: submitForm.value.code

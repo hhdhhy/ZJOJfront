@@ -72,7 +72,7 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="150" fixed="right">
+      <el-table-column label="操作" width="200" fixed="right">
         <template #default="scope">
           <el-button 
             size="small" 
@@ -80,6 +80,13 @@
             @click="submitProblem(scope.row)"
           >
             提交
+          </el-button>
+          <el-button 
+            size="small" 
+            type="danger"
+            @click="handleDeleteProblem(scope.row)"
+          >
+            删除
           </el-button>
         </template>
       </el-table-column>
@@ -100,8 +107,8 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { ElMessage } from 'element-plus'
-import authHttp from '@/api/authHttp'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { getProblemList, getTagList, deleteProblem } from '@/api'
 
 const props = defineProps({
   // 可能需要接收父组件的方法
@@ -128,7 +135,7 @@ const debouncedSearch = () => {
 // 获取标签列表
 const fetchTags = async () => {
   try {
-    const res = await authHttp.get('/api/problems/tags/')
+    const res = await getTagList()
     tags.value = res.data
   } catch (error) {
     console.error('获取标签列表失败:', error)
@@ -148,7 +155,7 @@ const fetchProblems = async () => {
       params.tag_id = selectedTag.value
     }
     
-    const res = await authHttp.get('/api/problems/', { params })
+    const res = await getProblemList(params)
     problems.value = res.data
   } catch (error) {
     ElMessage.error('获取题目列表失败')
@@ -168,6 +175,31 @@ const viewProblemDetail = (problemId) => {
 const submitProblem = (problem) => {
   ElMessage.info(`准备提交题目: ${problem.title}`)
   // TODO: 跳转到代码提交页面
+}
+
+// 删除题目
+const handleDeleteProblem = async (problem) => {
+  try {
+    await ElMessageBox.confirm(
+      `确定要删除题目 "${problem.title}" 吗?此操作不可恢复!`,
+      '警告',
+      {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }
+    )
+    
+    await deleteProblem(problem.problem_id)
+    ElMessage.success('题目删除成功')
+    // 刷新列表
+    fetchProblems()
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('删除题目失败:', error)
+      ElMessage.error(error.response?.data?.message || '删除题目失败')
+    }
+  }
 }
 
 // 初始化

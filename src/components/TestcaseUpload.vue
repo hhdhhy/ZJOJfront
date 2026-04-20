@@ -82,7 +82,7 @@
           type="danger" 
           size="small"
           style="margin-top: 20px;"
-          @click="deleteTestcases"
+          @click="handleDeleteTestcases"
           :loading="deleting"
         >
           删除测试用例
@@ -97,7 +97,7 @@ import { ref, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { UploadFilled } from '@element-plus/icons-vue'
 import { useAuthStore } from '@/stores/auth'
-import authHttp from '@/api/authHttp'
+import { uploadTestcases, getTestcaseList, deleteTestcases } from '@/api'
 
 const props = defineProps({
   problemId: {
@@ -172,7 +172,7 @@ const handleUploadError = (error) => {
 // 获取现有测试用例信息
 const fetchTestcaseInfo = async () => {
   try {
-    const res = await authHttp.get(`/api/problems/${props.problemId}/testcases/`)
+    const res = await getTestcaseList(props.problemId)
     if (res.data.code === 200 && res.data.data.has_testcases) {
       testcaseInfo.value = res.data.data
     }
@@ -182,7 +182,7 @@ const fetchTestcaseInfo = async () => {
 }
 
 // 删除测试用例
-const deleteTestcases = () => {
+const handleDeleteTestcases = () => {
   ElMessageBox.confirm(
     '确定要删除所有测试用例吗？此操作不可恢复！',
     '警告',
@@ -194,7 +194,7 @@ const deleteTestcases = () => {
   ).then(async () => {
     deleting.value = true
     try {
-      const res = await authHttp.delete(`/api/problems/${props.problemId}/testcases/delete/`)
+      const res = await deleteTestcases(props.problemId)
       if (res.data.code === 200) {
         ElMessage.success('测试用例已删除')
         testcaseInfo.value = null

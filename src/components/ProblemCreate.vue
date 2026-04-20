@@ -115,7 +115,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import authHttp from '@/api/authHttp'
+import { createProblem, getTagList } from '@/api'
 
 const emit = defineEmits(['create-success'])
 
@@ -162,7 +162,7 @@ const createRules = {
 // 获取标签列表
 const fetchTags = async () => {
   try {
-    const res = await authHttp.get('/api/problems/tags/')
+    const res = await getTagList()
     availableTags.value = res.data
   } catch (error) {
     console.error('获取标签列表失败:', error)
@@ -180,7 +180,7 @@ const submitCreate = async () => {
     if (valid) {
       submitting.value = true
       try {
-        const res = await authHttp.post('/api/problems/create/', {
+        const res = await createProblem({
           problem_id: createForm.value.problem_id,
           title: createForm.value.title,
           description: createForm.value.description,
