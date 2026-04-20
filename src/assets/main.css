@@ -1,5 +1,10 @@
 @import './base.css';
 
+/* 移除Element Plus卡片默认阴影 */
+.el-card {
+  box-shadow: none !important;
+}
+
 #app {
   max-width: 1280px;
   margin: 0 auto;
