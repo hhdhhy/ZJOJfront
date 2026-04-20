@@ -70,6 +70,7 @@
                   :problem-id="currentProblemId" 
                   @go-back="handleProblemEditGoBack"
                   @update-success="handleUpdateSuccess"
+                  @go-to-upload-testcase="handleEditGoToUploadTestcase"
                 />
               </div>
 
@@ -255,6 +256,12 @@ const handleEditProblem = () => {
 // 处理题目编辑页面返回
 const handleProblemEditGoBack = () => {
   goToPage('problem-detail')
+}
+
+// 处理从编辑页面跳转到上传测试用例
+const handleEditGoToUploadTestcase = (problemId) => {
+  currentProblemId.value = problemId
+  goToPage('upload-testcases')
 }
 
 // 处理题目更新成功

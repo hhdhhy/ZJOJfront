@@ -101,6 +101,14 @@
             更新题目
           </el-button>
           <el-button 
+            type="success"
+            @click="goToUploadTestcase" 
+            size="large"
+            style="margin-left: 10px;"
+          >
+            上传测试用例
+          </el-button>
+          <el-button 
             @click="resetForm" 
             style="margin-left: 10px;"
             size="large"
@@ -134,7 +142,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['go-back', 'update-success'])
+const emit = defineEmits(['go-back', 'update-success', 'go-to-upload-testcase'])
 
 // 响应式数据
 const loading = ref(true)
@@ -249,6 +257,11 @@ const resetForm = () => {
     memory_limit: problemData.value.memory_limit,
     tags: problemData.value.tags.map(tag => tag.id)
   }
+}
+
+// 跳转到上传测试用例页面
+const goToUploadTestcase = () => {
+  emit('go-to-upload-testcase', props.problemId)
 }
 
 // 删除题目
