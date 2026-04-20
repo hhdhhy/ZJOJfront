@@ -3,7 +3,7 @@ import axios from "axios";
 // 创建一个基础的 axios 实例
 const http = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
-  timeout: 30000, // 增加到30秒
+  timeout: 180000, // 3分钟
 });
 
 // 添加响应拦截器
