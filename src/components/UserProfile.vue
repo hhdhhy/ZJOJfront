@@ -291,18 +291,8 @@ onMounted(() => {
 
 <style scoped>
 .profile-card {
-  max-width: 800px;
-  margin: 0 auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  border: none;
-  overflow: hidden;
-}
-
-.profile-card :deep(.el-card__header) {
-  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-  padding: 20px 24px;
-  border-bottom: none;
+  max-width: 600px;
+  margin: 20px auto;
 }
 
 .card-header {
@@ -312,85 +302,40 @@ onMounted(() => {
 }
 
 .card-title {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
-  color: white;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: #303133;
 }
 
 .profile-form {
-  margin-top: 24px;
-  padding: 0 8px;
+  margin-top: 20px;
 }
 
 .profile-form :deep(.el-form-item__label) {
-  font-weight: 600;
-  color: #495057;
-  font-size: 14px;
-}
-
-.profile-form :deep(.el-input__wrapper) {
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-}
-
-.profile-form :deep(.el-input__wrapper:hover) {
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
-}
-
-.profile-form :deep(.el-input__wrapper.is-focus) {
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  font-weight: 500;
+  color: #606266;
 }
 
 .last-login-info {
-  margin-top: 24px;
-  padding: 16px;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
-  border-radius: 8px;
-  border-left: 3px solid #667eea;
+  margin-top: 20px;
 }
 
 .password-section {
-  margin-top: 32px;
-  padding-top: 24px;
+  margin-top: 20px;
 }
 
 .password-section h3 {
   margin-bottom: 20px;
-  color: #2c3e50;
-  font-size: 18px;
-  font-weight: 600;
-  padding-left: 12px;
-  border-left: 4px solid #667eea;
+  color: #303133;
+  font-size: 16px;
 }
 
 .password-form {
-  max-width: 600px;
-  padding: 0 8px;
-}
-
-.password-form :deep(.el-form-item__label) {
-  font-weight: 600;
-  color: #495057;
-}
-
-:deep(.el-button--primary) {
-  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-  border: none;
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-  transition: all 0.3s ease;
-  font-weight: 500;
-}
-
-:deep(.el-button--primary:hover) {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  max-width: 500px;
 }
 
 :deep(.el-skeleton__item) {
   height: 40px !important;
   margin-bottom: 16px;
-  border-radius: 8px;
 }
 </style>

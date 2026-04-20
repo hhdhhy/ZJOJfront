@@ -354,7 +354,7 @@ const getResultType = (result) => {
 }
 
 .main-content {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-color: #f5f7fa;
   padding: 20px;
   min-height: calc(100vh - 60px);
 }
@@ -365,20 +365,15 @@ const getResultType = (result) => {
 
 .breadcrumb {
   margin-bottom: 20px;
-  background: rgba(255, 255, 255, 0.9);
+  background: white;
   padding: 12px 20px;
-  border-radius: 8px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
 }
 
 .page-content {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
+  background: white;
+  border-radius: 4px;
+  padding: 20px;
 }
 
 .card-header {

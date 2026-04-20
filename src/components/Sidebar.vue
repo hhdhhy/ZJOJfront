@@ -82,11 +82,10 @@ const sidebarWidth = computed(() => {
 
 <style scoped>
 .sidebar {
-  background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: #fff;
+  transition: width 0.3s;
   height: calc(100vh - 60px);
-  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.08);
-  border-right: 1px solid rgba(0, 0, 0, 0.05);
+  border-right: 1px solid #dcdfe6;
 }
 
 .sidebar.collapsed {
@@ -96,28 +95,6 @@ const sidebarWidth = computed(() => {
 .sidebar-menu {
   border: none;
   height: 100%;
-  background: transparent;
-}
-
-:deep(.el-menu-item) {
-  margin: 8px 12px;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-}
-
-:deep(.el-menu-item:hover) {
-  background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-  transform: translateX(4px);
-}
-
-:deep(.el-menu-item.is-active) {
-  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-}
-
-:deep(.el-menu-item.is-active .el-icon) {
-  color: white;
 }
 
 :deep(.el-scrollbar__wrap) {
