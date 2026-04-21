@@ -16,7 +16,8 @@ let form_register = reactive({
   password: "",
   confirmPassword: "",
   email: "",
-  realname: ""
+  realname: "",
+  telephone: ""
 })
 
 const onSubmit = async () => {
@@ -52,7 +53,8 @@ const onSubmit = async () => {
       username: form_register.username,
       password: form_register.password,
       email: form_register.email,
-      realname: form_register.realname
+      realname: form_register.realname,
+      telephone: form_register.telephone || null
     })
     let data = res.data
     
