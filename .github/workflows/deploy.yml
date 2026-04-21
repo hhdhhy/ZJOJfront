@@ -1,0 +1,49 @@
+name: Docker Build and Deploy
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Build Docker image
+      run: |
+        docker build -t zjoj-frontend:${{ github.sha }} .
+        docker save zjoj-frontend:${{ github.sha }} | gzip > zjoj-frontend.tar.gz
+
+    - name: Deploy to server
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        source: "zjoj-frontend.tar.gz"
+        target: "~/"
+
+    - name: Load image and restart container
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          docker load < ~/zjoj-frontend.tar.gz
+          rm ~/zjoj-frontend.tar.gz
+          docker stop zjoj-frontend || true
+          docker rm zjoj-frontend || true
+          docker run -d \
+            --name zjoj-frontend \
+            -p 80:80 \
+            --restart unless-stopped \
+            zjoj-frontend:${{ github.sha }}
+          docker image prune -f
