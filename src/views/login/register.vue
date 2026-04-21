@@ -63,13 +63,34 @@ const onSubmit = async () => {
   } catch (err) {
     let errorMsg = "注册失败"
     if (err.response && err.response.data) {
-      if (err.response.data.detail) {
-        errorMsg += "：" + err.response.data.detail
-      } else if (err.response.data.error) {
-        errorMsg += "：" + err.response.data.error
+      // 尝试获取详细错误信息
+      const data = err.response.data
+      if (data.detail) {
+        errorMsg += "：" + data.detail
+      } else if (data.error) {
+        errorMsg += "：" + data.error
+      } else if (data.message) {
+        errorMsg += "：" + data.message
+      } else if (typeof data === 'object') {
+        // 处理字段验证错误
+        const errors = []
+        for (const key in data) {
+          if (Array.isArray(data[key])) {
+            errors.push(`${key}: ${data[key].join(', ')}`)
+          }
+        }
+        if (errors.length > 0) {
+          errorMsg += "：\n" + errors.join('\n')
+        } else {
+          errorMsg += "：请检查输入信息"
+        }
       } else {
         errorMsg += "：请检查输入信息"
       }
+    } else if (err.code === 'ECONNABORTED') {
+      errorMsg += "：请求超时，请检查网络连接"
+    } else {
+      errorMsg += "：网络错误，请稍后重试"
     }
     ElMessage.error(errorMsg)
     console.log("注册失败：", err)
