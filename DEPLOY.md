@@ -1,63 +1,43 @@
 # ZJOJ 前端部署指南
 
-## Docker部署(唯一推荐方式)
+## Docker部署(推荐)
 
 ### 前置要求
 
 - 服务器已安装Docker和Docker Compose
 - SSH密钥配置完成
+- 代码已推送到GitHub
 
-### 快速部署
+### 首次部署
 
+1. 在服务器上克隆代码:
 ```bash
-# 添加执行权限
-chmod +x deploy-docker.sh
-
-# 一键部署
-./deploy-docker.sh
-
-# 或指定服务器IP
-./deploy-docker.sh 101.35.233.33
+cd ~
+git clone https://github.com/hhdhhy/ZJOJfront.git
+cd ZJOJfront
 ```
 
-部署脚本会自动:
-1. 构建Docker镜像
-2. 上传到服务器
-3. 启动容器
-
-### 手动部署
-
+2. 构建并启动容器:
 ```bash
-# 1. 构建镜像
-docker build -t zjoj-frontend:latest .
-
-# 2. 保存并压缩镜像
-docker save zjoj-frontend:latest | gzip > zjoj-frontend.tar.gz
-
-# 3. 上传到服务器
-scp zjoj-frontend.tar.gz ubuntu@101.35.233.33:~/
-
-# 4. 加载镜像
-ssh ubuntu@101.35.233.33 "docker load < ~/zjoj-frontend.tar.gz"
-
-# 5. 运行容器
-ssh ubuntu@101.35.233.33 "docker run -d -p 80:80 --name zjoj-frontend --restart unless-stopped zjoj-frontend:latest"
-
-# 6. 清理临时文件
-rm zjoj-frontend.tar.gz
+docker compose up -d --build
 ```
 
 ### 更新部署
 
-每次代码修改后:
+每次代码修改后,在服务器上执行:
 
 ```bash
-./deploy-docker.sh
+cd ~/ZJOJfront
+git pull
+docker compose up -d --build
 ```
 
-脚本会自动重建镜像并替换运行中的容器。
+会自动:
+1. 拉取最新代码
+2. 重新构建Docker镜像
+3. 重启容器
 
-### Docker常用命令
+### 常用命令
 
 ```bash
 # 查看容器状态
@@ -68,196 +48,52 @@ docker logs zjoj-frontend
 docker logs -f zjoj-frontend  # 实时日志
 
 # 重启容器
-docker restart zjoj-frontend
+docker compose restart
 
-# 停止容器
-docker stop zjoj-frontend
-
-# 启动容器
-docker start zjoj-frontend
-
-# 删除容器
-docker rm zjoj-frontend
-
-# 删除镜像
-docker rmi zjoj-frontend:latest
-
-# 查看资源使用
-docker stats zjoj-frontend
+# 停止服务
+docker compose down
 
 # 进入容器
 docker exec -it zjoj-frontend sh
+
+# 查看资源使用
+docker stats zjoj-frontend
 ```
 
-### 使用Docker Compose
+### 故障排查
 
-如果同时部署前后端:
-
+**80端口被占用:**
 ```bash
-# 启动所有服务
-docker-compose up -d
+# 查找占用80端口的容器
+docker ps | grep 80
 
-# 查看服务状态
-docker-compose ps
+# 停止冲突的容器
+docker stop <container_name>
+docker rm <container_name>
 
-# 查看日志
-docker-compose logs -f
-
-# 重启服务
-docker-compose restart
-
-# 停止服务
-docker-compose down
-
-# 重新构建并启动
-docker-compose up -d --build
+# 重新启动
+docker compose up -d
 ```
 
-## 服务器信息
-
-- 服务器IP: 101.35.233.33
-- 用户名: ubuntu
-- 前端端口: 80
-- 后端API: 通过Nginx反向代理到后端容器
-
-## 常见问题
-
-### 1. 容器启动失败
-
+**容器启动失败:**
 ```bash
-# 查看日志
+# 查看详细日志
 docker logs zjoj-frontend
 
-# 检查端口占用
-sudo netstat -tlnp | grep 80
+# 重新构建
+docker compose down
+docker compose up -d --build
 ```
 
-### 2. 无法访问
+## 架构说明
 
-```bash
-# 检查容器状态
-docker ps
+- **前端容器**: Nginx提供静态文件,代理/api/请求到后端
+- **后端地址**: http://101.35.233.33:8000
+- **前端访问**: http://101.35.233.33
 
-# 检查防火墙
-sudo ufw status
+## 技术栈
 
-# 检查Nginx配置
-docker exec zjoj-frontend nginx -t
-```
-
-### 3. 更新后还是旧版本
-
-```bash
-# 强制删除旧容器和镜像
-docker rm -f zjoj-frontend
-docker rmi zjoj-frontend:latest
-
-# 重新部署
-./deploy-docker.sh
-```
-
-### 4. 磁盘空间不足
-
-```bash
-# 清理未使用的镜像
-docker image prune -a
-
-# 清理未使用的容器
-docker container prune
-
-# 查看磁盘使用
-docker system df
-```
-
-## 性能优化
-
-### 1. 限制容器资源
-
-编辑docker-compose.yml:
-
-```yaml
-services:
-  zjoj-frontend:
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 100M
-```
-
-### 2. 启用Gzip压缩
-
-在Dockerfile的nginx.conf中添加:
-
-```nginx
-gzip on;
-gzip_types text/plain text/css application/json application/javascript;
-```
-
-### 3. 使用CDN
-
-将静态资源(CSS/JS/图片)托管到CDN加速访问。
-
-## 备份与恢复
-
-### 备份
-
-```bash
-# 保存镜像
-docker save zjoj-frontend:latest | gzip > backup.tar.gz
-
-# 备份配置文件
-scp ubuntu@101.35.233.33:~/zjoj-docker-compose.yml ./backup/
-```
-
-### 恢复
-
-```bash
-# 加载镜像
-docker load < backup.tar.gz
-
-# 启动容器
-docker-compose up -d
-```
-
-## 监控
-
-```bash
-# 实时监控
-docker stats
-
-# 查看容器详细信息
-docker inspect zjoj-frontend
-
-# 查看日志大小
-docker logs zjoj-frontend 2>&1 | wc -l
-```
-
-## 安全建议
-
-1. **定期更新基础镜像**
-   ```bash
-   docker pull nginx:alpine
-   docker pull node:18-alpine
-   ```
-
-2. **使用非root用户运行**
-   在Dockerfile中添加:
-   ```dockerfile
-   RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-   USER appuser
-   ```
-
-3. **限制容器权限**
-   ```yaml
-   services:
-     zjoj-frontend:
-       security_opt:
-         - no-new-privileges:true
-       read_only: true
-   ```
-
-4. **定期扫描漏洞**
-   ```bash
-   docker scan zjoj-frontend:latest
-   ```
+- Node.js 20 (构建时)
+- Vite 7
+- Vue 3
+- Nginx Alpine (运行时)
