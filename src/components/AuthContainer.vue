@@ -15,6 +15,9 @@ defineProps({
 
 <template>
   <div class="auth-container">
+    <div class="site-header">
+      <h1 class="site-title">铸剑OJ</h1>
+    </div>
     <div class="auth-box">
       <div class="auth-header">
         <img :src="img_zjoj" alt="铸剑OJ Logo" class="logo-icon-img" />
@@ -38,6 +41,22 @@ defineProps({
   padding: 20px;
   position: relative;
   overflow: hidden;
+}
+
+.site-header {
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.site-title {
+  margin: 0;
+  color: #2d3748;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 2px;
 }
 
 .auth-box {
