@@ -18,8 +18,26 @@ RUN npm run build
 # 生产阶段
 FROM nginx:alpine
 
-# 复制自定义nginx配置
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# 创建自定义nginx配置
+RUN echo 'server { \
+    listen 80; \
+    server_name localhost; \
+    location / { \
+        root /usr/share/nginx/html; \
+        index index.html; \
+        try_files $uri $uri/ /index.html; \
+    } \
+    location /api/ { \
+        proxy_pass http://backend:8000; \
+        proxy_set_header Host $host; \
+        proxy_set_header X-Real-IP $remote_addr; \
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; \
+        proxy_set_header X-Forwarded-Proto $scheme; \
+        proxy_connect_timeout 180s; \
+        proxy_send_timeout 180s; \
+        proxy_read_timeout 180s; \
+    } \
+}' > /etc/nginx/conf.d/default.conf
 
 # 复制构建产物
 COPY --from=builder /app/dist /usr/share/nginx/html
