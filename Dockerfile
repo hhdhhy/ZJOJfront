@@ -27,6 +27,16 @@ RUN echo 'server { \
         index index.html; \
         try_files $uri $uri/ /index.html; \
     } \
+    location /api/ { \
+        proxy_pass http://101.35.233.33:8000; \
+        proxy_set_header Host $host; \
+        proxy_set_header X-Real-IP $remote_addr; \
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; \
+        proxy_set_header X-Forwarded-Proto $scheme; \
+        proxy_connect_timeout 180s; \
+        proxy_send_timeout 180s; \
+        proxy_read_timeout 180s; \
+    } \
 }' > /etc/nginx/conf.d/default.conf
 
 # 复制构建产物
