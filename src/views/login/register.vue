@@ -180,6 +180,20 @@ const goBackToLogin = () => {
           size="small"
         />
       </el-form-item>
+
+      <el-form-item class="form-item">
+        <label class="custom-label">
+          <span class="label-icon">📱</span>
+          手机号（可选）
+        </label>
+        <el-input 
+          type="tel" 
+          placeholder="请输入手机号（可选）" 
+          class="input-field" 
+          v-model="form_register.telephone"
+          size="small"
+        />
+      </el-form-item>
     </el-form>
 
     <el-button 
