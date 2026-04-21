@@ -1,66 +1,61 @@
 # ZJOJ 前端部署指南
 
-## 部署方式选择
+## Docker部署(唯一推荐方式)
 
-### 方式一: Docker部署(推荐)
+### 前置要求
 
-**优点:**
-- 环境一致,避免依赖问题
-- 一键部署,简单可靠
-- 易于扩展和维护
-- 隔离性好,不影响宿主机
-
-**要求:**
 - 服务器已安装Docker和Docker Compose
+- SSH密钥配置完成
 
-### 方式二: 传统部署
-
-**优点:**
-- 不需要Docker环境
-- 更直接的控制
-
-**缺点:**
-- 需要手动配置环境
-- 可能出现依赖冲突
-
----
-
-## Docker部署
-
-### 首次部署
-
-1. 确保服务器已安装Docker和Docker Compose
-2. 运行Docker部署脚本:
+### 快速部署
 
 ```bash
+# 添加执行权限
 chmod +x deploy-docker.sh
+
+# 一键部署
 ./deploy-docker.sh
+
+# 或指定服务器IP
+./deploy-docker.sh 101.35.233.33
 ```
 
-### 更新部署
+部署脚本会自动:
+1. 构建Docker镜像
+2. 上传到服务器
+3. 启动容器
 
-```bash
-./deploy-docker.sh
-```
-
-### 手动Docker部署
+### 手动部署
 
 ```bash
 # 1. 构建镜像
 docker build -t zjoj-frontend:latest .
 
-# 2. 保存镜像
+# 2. 保存并压缩镜像
 docker save zjoj-frontend:latest | gzip > zjoj-frontend.tar.gz
 
 # 3. 上传到服务器
 scp zjoj-frontend.tar.gz ubuntu@101.35.233.33:~/
 
-# 4. 在服务器上加载镜像
+# 4. 加载镜像
 ssh ubuntu@101.35.233.33 "docker load < ~/zjoj-frontend.tar.gz"
 
-# 5. 启动容器
-ssh ubuntu@101.35.233.33 "docker run -d -p 80:80 --name zjoj-frontend zjoj-frontend:latest"
+# 5. 运行容器
+ssh ubuntu@101.35.233.33 "docker run -d -p 80:80 --name zjoj-frontend --restart unless-stopped zjoj-frontend:latest"
+
+# 6. 清理临时文件
+rm zjoj-frontend.tar.gz
 ```
+
+### 更新部署
+
+每次代码修改后:
+
+```bash
+./deploy-docker.sh
+```
+
+脚本会自动重建镜像并替换运行中的容器。
 
 ### Docker常用命令
 
@@ -70,6 +65,7 @@ docker ps
 
 # 查看日志
 docker logs zjoj-frontend
+docker logs -f zjoj-frontend  # 实时日志
 
 # 重启容器
 docker restart zjoj-frontend
@@ -77,118 +73,191 @@ docker restart zjoj-frontend
 # 停止容器
 docker stop zjoj-frontend
 
+# 启动容器
+docker start zjoj-frontend
+
 # 删除容器
 docker rm zjoj-frontend
 
-# 查看容器资源使用
+# 删除镜像
+docker rmi zjoj-frontend:latest
+
+# 查看资源使用
 docker stats zjoj-frontend
+
+# 进入容器
+docker exec -it zjoj-frontend sh
 ```
 
----
+### 使用Docker Compose
 
-## 传统部署
-
-### 首次部署
-
-1. 确保已配置SSH密钥访问服务器
-2. 运行部署脚本:
+如果同时部署前后端:
 
 ```bash
-chmod +x deploy.sh
-./deploy.sh
-```
+# 启动所有服务
+docker-compose up -d
 
-### 更新部署
+# 查看服务状态
+docker-compose ps
 
-每次代码修改后,只需运行:
+# 查看日志
+docker-compose logs -f
 
-```bash
-./deploy.sh
-```
+# 重启服务
+docker-compose restart
 
-脚本会自动:
-- 安装依赖
-- 构建项目
-- 上传到服务器
-- 设置权限
-- 重启Nginx
+# 停止服务
+docker-compose down
 
-## 手动部署步骤
-
-如果需要手动部署:
-
-```bash
-# 1. 构建
-npm run build
-
-# 2. 上传文件
-scp -r dist/* ubuntu@101.35.233.33:/var/www/zjoj-front/
-
-# 3. 设置权限
-ssh ubuntu@101.35.233.33 "sudo chown -R www-data:www-data /var/www/zjoj-front"
-
-# 4. 重启Nginx
-ssh ubuntu@101.35.233.33 "sudo systemctl reload nginx"
-```
-
-## Nginx配置
-
-如果修改了nginx.conf,需要重新部署:
-
-```bash
-chmod +x deploy-nginx.sh
-./deploy-nginx.sh
+# 重新构建并启动
+docker-compose up -d --build
 ```
 
 ## 服务器信息
 
 - 服务器IP: 101.35.233.33
 - 用户名: ubuntu
-- 前端目录: /var/www/zjoj-front
-- Nginx配置: /etc/nginx/sites-available/zjoj
-- 后端API: http://127.0.0.1:8000 (通过Nginx反向代理)
+- 前端端口: 80
+- 后端API: 通过Nginx反向代理到后端容器
 
 ## 常见问题
 
-### 1. 权限错误
-
-如果遇到Permission denied错误:
+### 1. 容器启动失败
 
 ```bash
-ssh ubuntu@101.35.233.33 "sudo chown -R www-data:www-data /var/www/zjoj-front"
+# 查看日志
+docker logs zjoj-frontend
+
+# 检查端口占用
+sudo netstat -tlnp | grep 80
 ```
 
-### 2. Nginx配置错误
-
-检查Nginx配置:
+### 2. 无法访问
 
 ```bash
-ssh ubuntu@101.35.233.33 "sudo nginx -t"
+# 检查容器状态
+docker ps
+
+# 检查防火墙
+sudo ufw status
+
+# 检查Nginx配置
+docker exec zjoj-frontend nginx -t
 ```
 
-查看错误日志:
+### 3. 更新后还是旧版本
 
 ```bash
-ssh ubuntu@101.35.233.33 "sudo tail -50 /var/log/nginx/error.log"
+# 强制删除旧容器和镜像
+docker rm -f zjoj-frontend
+docker rmi zjoj-frontend:latest
+
+# 重新部署
+./deploy-docker.sh
 ```
 
-### 3. 后端服务未启动
-
-检查后端状态:
+### 4. 磁盘空间不足
 
 ```bash
-ssh ubuntu@101.35.233.33 "sudo supervisorctl status"
+# 清理未使用的镜像
+docker image prune -a
+
+# 清理未使用的容器
+docker container prune
+
+# 查看磁盘使用
+docker system df
 ```
 
-重启后端:
+## 性能优化
+
+### 1. 限制容器资源
+
+编辑docker-compose.yml:
+
+```yaml
+services:
+  zjoj-frontend:
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 100M
+```
+
+### 2. 启用Gzip压缩
+
+在Dockerfile的nginx.conf中添加:
+
+```nginx
+gzip on;
+gzip_types text/plain text/css application/json application/javascript;
+```
+
+### 3. 使用CDN
+
+将静态资源(CSS/JS/图片)托管到CDN加速访问。
+
+## 备份与恢复
+
+### 备份
 
 ```bash
-ssh ubuntu@101.35.233.33 "sudo supervisorctl restart zjoj"
+# 保存镜像
+docker save zjoj-frontend:latest | gzip > backup.tar.gz
+
+# 备份配置文件
+scp ubuntu@101.35.233.33:~/zjoj-docker-compose.yml ./backup/
 ```
 
-## 环境变量
+### 恢复
 
-开发环境: `.env.development`
-生产环境: `.env.production`
+```bash
+# 加载镜像
+docker load < backup.tar.gz
 
-确保生产环境的VITE_BASE_URL指向正确的后端地址。
+# 启动容器
+docker-compose up -d
+```
+
+## 监控
+
+```bash
+# 实时监控
+docker stats
+
+# 查看容器详细信息
+docker inspect zjoj-frontend
+
+# 查看日志大小
+docker logs zjoj-frontend 2>&1 | wc -l
+```
+
+## 安全建议
+
+1. **定期更新基础镜像**
+   ```bash
+   docker pull nginx:alpine
+   docker pull node:18-alpine
+   ```
+
+2. **使用非root用户运行**
+   在Dockerfile中添加:
+   ```dockerfile
+   RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+   USER appuser
+   ```
+
+3. **限制容器权限**
+   ```yaml
+   services:
+     zjoj-frontend:
+       security_opt:
+         - no-new-privileges:true
+       read_only: true
+   ```
+
+4. **定期扫描漏洞**
+   ```bash
+   docker scan zjoj-frontend:latest
+   ```

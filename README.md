@@ -99,12 +99,12 @@ npm run preview
 
 ## 部署
 
-详细部署文档请查看 [DEPLOY.md](DEPLOY.md)
+**推荐使用Docker部署**,详细文档请查看 [DEPLOY.md](DEPLOY.md)
 
 快速部署:
 ```bash
-chmod +x deploy.sh
-./deploy.sh
+chmod +x deploy-docker.sh
+./deploy-docker.sh
 ```
 
 ## API配置
