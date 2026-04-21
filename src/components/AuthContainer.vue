@@ -15,13 +15,6 @@ defineProps({
 
 <template>
   <div class="auth-container">
-    <!-- CSS 岩浆效果容器 -->
-    <div class="lava-container">
-      <div class="lava"></div>
-      <div class="lava-flow"></div>
-      <div class="lava-glow"></div>
-    </div>
-
     <div class="auth-box">
       <div class="auth-header">
         <img :src="img_zjoj" alt="铸剑OJ Logo" class="logo-icon-img" />
@@ -103,94 +96,5 @@ defineProps({
   color: #718096;
   font-size: 14px;
   font-weight: 400;
-}
-
-/* 复用登录页面的岩浆效果样式 */
-.lava-container {
-  position: absolute;
-  bottom: 0;
-  left: -100px;
-  width: calc(100% + 200px);
-  height: 150px;
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  pointer-events: none;
-  z-index: 5;
-  overflow: visible;
-}
-
-.lava {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 100px;
-  background: linear-gradient(to top, #FF4500, #FF6347, #FFA500);
-  border-radius: 50% 50% 0 0;
-  animation: lavaFlow 5s infinite ease-in-out;
-}
-
-.lava-flow {
-  position: absolute;
-  bottom: 30px;
-  width: 100%;
-  height: 80px;
-  background: linear-gradient(90deg,
-      transparent,
-      rgba(255, 165, 0, 0.8),
-      rgba(255, 69, 0, 0.7),
-      transparent);
-  border-radius: 50%;
-  filter: blur(10px);
-  animation: flow 4s infinite linear;
-  opacity: 0.8;
-}
-
-@keyframes lavaFlow {
-  0%, 100% {
-    transform: scaleY(1) scaleX(1);
-    opacity: 0.9;
-  }
-  25% {
-    transform: scaleY(1.05) scaleX(0.98) skew(2deg);
-  }
-  50% {
-    transform: scaleY(1.03) scaleX(1.01) skew(-2deg);
-  }
-  75% {
-    transform: scaleY(1.04) scaleX(0.99) skew(1deg);
-  }
-}
-
-@keyframes flow {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-.lava-glow {
-  position: absolute;
-  bottom: -60px;
-  left: -200px;
-  width: calc(100% + 400px);
-  height: 150px;
-  background: radial-gradient(ellipse at center, rgba(255, 100, 0, 0.4) 0%, rgba(255, 165, 0, 0.2) 70%, transparent 70%);
-  filter: blur(40px);
-  animation: glowPulse 2s infinite alternate;
-  z-index: 4;
-}
-
-@keyframes glowPulse {
-  0% {
-    opacity: 0.6;
-    transform: scaleY(0.8);
-  }
-  100% {
-    opacity: 0.9;
-    transform: scaleY(1.1);
-  }
 }
 </style>
