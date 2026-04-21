@@ -111,7 +111,6 @@ const goBackToLogin = () => {
     <el-form :model="form_register" ref="formRef" @keyup.enter="onSubmit">
       <el-form-item class="form-item">
         <label class="custom-label">
-          <span class="label-icon"></span>
           用户名
         </label>
         <el-input 
@@ -125,7 +124,6 @@ const goBackToLogin = () => {
 
       <el-form-item class="form-item">
         <label class="custom-label">
-          <span class="label-icon">🔒</span>
           密码
         </label>
         <el-input 
@@ -140,7 +138,6 @@ const goBackToLogin = () => {
 
       <el-form-item class="form-item">
         <label class="custom-label">
-          <span class="label-icon">✅</span>
           确认密码
         </label>
         <el-input 
@@ -155,7 +152,6 @@ const goBackToLogin = () => {
 
       <el-form-item class="form-item">
         <label class="custom-label">
-          <span class="label-icon">📧</span>
           邮箱
         </label>
         <el-input 
@@ -169,7 +165,6 @@ const goBackToLogin = () => {
 
       <el-form-item class="form-item">
         <label class="custom-label">
-          <span class="label-icon">📛</span>
           真实姓名
         </label>
         <el-input 
@@ -183,7 +178,6 @@ const goBackToLogin = () => {
 
       <el-form-item class="form-item">
         <label class="custom-label">
-          <span class="label-icon">📱</span>
           手机号（可选）
         </label>
         <el-input 
@@ -226,11 +220,6 @@ const goBackToLogin = () => {
   color: #4a5568;
   font-size: 12px;
   font-weight: 600;
-}
-
-.label-icon {
-  margin-right: 3px;
-  font-size: 10px;
 }
 
 .input-field {

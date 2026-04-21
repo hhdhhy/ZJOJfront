@@ -33,25 +33,11 @@ defineProps({
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(-45deg, #4B0082, #8A2BE2, #3c37d5, #9370DB, #6A5ACD);
-  background-size: 600% 600%;
-  animation: gradientBG 12s ease infinite;
+  background: #f5f7fa;
   font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
   padding: 20px;
   position: relative;
   overflow: hidden;
-}
-
-@keyframes gradientBG {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
 }
 
 .auth-box {
