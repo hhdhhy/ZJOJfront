@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  zjoj-frontend:
+    build: .
+    container_name: zjoj-frontend
+    ports:
+      - "80:80"
+    restart: unless-stopped
+    networks:
+      - zjoj-network
+    depends_on:
+      - zjoj-backend
+
+  zjoj-backend:
+    image: zjoj-backend:latest  # 替换为你的后端镜像
+    container_name: zjoj-backend
+    restart: unless-stopped
+    networks:
+      - zjoj-network
+    environment:
+      - DJANGO_SETTINGS_MODULE=ZJOJ.settings_production
+    volumes:
+      - backend-media:/app/media
+      - backend-static:/app/static
+
+networks:
+  zjoj-network:
+    driver: bridge
+
+volumes:
+  backend-media:
+  backend-static:

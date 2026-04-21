@@ -1,6 +1,92 @@
 # ZJOJ 前端部署指南
 
-## 快速部署
+## 部署方式选择
+
+### 方式一: Docker部署(推荐)
+
+**优点:**
+- 环境一致,避免依赖问题
+- 一键部署,简单可靠
+- 易于扩展和维护
+- 隔离性好,不影响宿主机
+
+**要求:**
+- 服务器已安装Docker和Docker Compose
+
+### 方式二: 传统部署
+
+**优点:**
+- 不需要Docker环境
+- 更直接的控制
+
+**缺点:**
+- 需要手动配置环境
+- 可能出现依赖冲突
+
+---
+
+## Docker部署
+
+### 首次部署
+
+1. 确保服务器已安装Docker和Docker Compose
+2. 运行Docker部署脚本:
+
+```bash
+chmod +x deploy-docker.sh
+./deploy-docker.sh
+```
+
+### 更新部署
+
+```bash
+./deploy-docker.sh
+```
+
+### 手动Docker部署
+
+```bash
+# 1. 构建镜像
+docker build -t zjoj-frontend:latest .
+
+# 2. 保存镜像
+docker save zjoj-frontend:latest | gzip > zjoj-frontend.tar.gz
+
+# 3. 上传到服务器
+scp zjoj-frontend.tar.gz ubuntu@101.35.233.33:~/
+
+# 4. 在服务器上加载镜像
+ssh ubuntu@101.35.233.33 "docker load < ~/zjoj-frontend.tar.gz"
+
+# 5. 启动容器
+ssh ubuntu@101.35.233.33 "docker run -d -p 80:80 --name zjoj-frontend zjoj-frontend:latest"
+```
+
+### Docker常用命令
+
+```bash
+# 查看容器状态
+docker ps
+
+# 查看日志
+docker logs zjoj-frontend
+
+# 重启容器
+docker restart zjoj-frontend
+
+# 停止容器
+docker stop zjoj-frontend
+
+# 删除容器
+docker rm zjoj-frontend
+
+# 查看容器资源使用
+docker stats zjoj-frontend
+```
+
+---
+
+## 传统部署
 
 ### 首次部署
 
