@@ -59,6 +59,10 @@ const onSubmit = async () => {
     loading.value = false
   }
 }
+
+const handleForgotPassword = () => {
+  ElMessage.info('请联系管理员重置密码')
+}
 </script>
 
 <template>
@@ -105,7 +109,7 @@ const onSubmit = async () => {
     </el-button>
 
     <div class="extra-links">
-      <a href="#" class="link-item">忘记密码？</a>
+      <a href="#" class="link-item" @click.prevent="handleForgotPassword">忘记密码？</a>
       <span class="divider">|</span>
       <router-link to="/register" class="link-item">注册新账号</router-link>
     </div>
