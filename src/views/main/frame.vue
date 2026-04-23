@@ -5,6 +5,7 @@
       <el-header class="header-container">
         <HeaderNav 
           :sidebar-collapsed="sidebarCollapsed" 
+          :user-info="authStore.user"
           @toggle-sidebar="toggleSidebar"
         />
       </el-header>

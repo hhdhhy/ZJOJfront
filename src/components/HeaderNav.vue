@@ -11,6 +11,10 @@
         <span>ZJOJ</span>
       </div>
     </div>
+    
+    <div class="nav-right">
+      <span class="username">{{ userInfo.username || '用户' }}</span>
+    </div>
   </div>
 </template>
 
@@ -18,7 +22,8 @@
 import { Fold, Expand } from '@element-plus/icons-vue'
 
 defineProps({
-  sidebarCollapsed: Boolean
+  sidebarCollapsed: Boolean,
+  userInfo: Object
 })
 
 defineEmits(['toggle-sidebar'])
@@ -50,5 +55,15 @@ defineEmits(['toggle-sidebar'])
   font-size: 20px;
   font-weight: bold;
   color: #409EFF;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+}
+
+.username {
+  color: #606266;
+  font-size: 14px;
 }
 </style>
