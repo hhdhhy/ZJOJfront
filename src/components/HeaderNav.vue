@@ -11,40 +11,17 @@
         <span>ZJOJ</span>
       </div>
     </div>
-    
-    <div class="nav-right">
-      <el-dropdown placement="bottom-end">
-        <div class="user-info">
-          <el-avatar :size="40" :src="avatarUrl" class="avatar" />
-          <span class="username">{{ userInfo.username || '用户' }}</span>
-          <el-icon class="ml-4"><ArrowDown /></el-icon>
-        </div>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item @click="$emit('view-profile')">个人信息</el-dropdown-item>
-            <el-dropdown-item @click="$emit('settings')">设置</el-dropdown-item>
-            <el-dropdown-item @click="$emit('logout')" divided>退出登录</el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
-    </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { Fold, Expand, ArrowDown } from '@element-plus/icons-vue'
-import avatarImg from '@/assets/img/zjoj.png'
+import { Fold, Expand } from '@element-plus/icons-vue'
 
 defineProps({
-  sidebarCollapsed: Boolean,
-  userInfo: Object
+  sidebarCollapsed: Boolean
 })
 
-defineEmits(['toggle-sidebar', 'view-profile', 'settings', 'logout'])
-
-// 使用本地图片，防止外部链接无法访问
-const avatarUrl = ref(avatarImg)
+defineEmits(['toggle-sidebar'])
 </script>
 
 <style scoped>
@@ -73,37 +50,5 @@ const avatarUrl = ref(avatarImg)
   font-size: 20px;
   font-weight: bold;
   color: #409EFF;
-}
-
-.nav-right {
-  display: flex;
-  align-items: center;
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  padding: 6px 12px;
-  border-radius: 4px;
-  transition: background-color 0.2s;
-}
-
-.user-info:hover {
-  background-color: #f5f7fa;
-}
-
-.avatar {
-  margin-right: 10px;
-}
-
-.username {
-  margin-right: 8px;
-  color: #606266;
-}
-
-.ml-4 {
-  margin-left: 4px;
-  color: #909399;
 }
 </style>

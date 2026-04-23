@@ -1,51 +1,64 @@
 <template>
   <el-aside :width="sidebarWidth" class="sidebar" :class="{ collapsed: sidebarCollapsed }">
-    <el-scrollbar>
-      <el-menu :default-active="activeMenu" :collapse="sidebarCollapsed" :collapse-transition="false"
-        class="sidebar-menu" @select="$emit('menu-select', $event)">
-        <el-menu-item index="home">
-          <el-icon>
-            <HomeFilled />
-          </el-icon>
-          <template #title>首页</template>
-        </el-menu-item>
+    <div class="sidebar-content">
+      <el-scrollbar>
+        <el-menu :default-active="activeMenu" :collapse="sidebarCollapsed" :collapse-transition="false"
+          class="sidebar-menu" @select="$emit('menu-select', $event)">
+          <el-menu-item index="home">
+            <el-icon>
+              <HomeFilled />
+            </el-icon>
+            <template #title>首页</template>
+          </el-menu-item>
 
-        <el-menu-item index="problems">
-          <el-icon>
-            <List />
-          </el-icon>
-          <template #title>题目列表</template>
-        </el-menu-item>
-        
-        <el-menu-item index="create-problem">
-          <el-icon>
-            <Plus />
-          </el-icon>
-          <template #title>创建题目</template>
-        </el-menu-item>
+          <el-menu-item index="problems">
+            <el-icon>
+              <List />
+            </el-icon>
+            <template #title>题目列表</template>
+          </el-menu-item>
+          
+          <el-menu-item index="create-problem">
+            <el-icon>
+              <Plus />
+            </el-icon>
+            <template #title>创建题目</template>
+          </el-menu-item>
 
-        <el-menu-item index="status">
-          <el-icon>
-            <Document />
-          </el-icon>
-          <template #title>评测状态</template>
-        </el-menu-item>
+          <el-menu-item index="status">
+            <el-icon>
+              <Document />
+            </el-icon>
+            <template #title>评测状态</template>
+          </el-menu-item>
 
-        <el-menu-item index="qa">
-          <el-icon>
-            <ChatLineRound />
-          </el-icon>
-          <template #title>知识问答</template>
-        </el-menu-item>
+          <el-menu-item index="qa">
+            <el-icon>
+              <ChatLineRound />
+            </el-icon>
+            <template #title>知识问答</template>
+          </el-menu-item>
 
-        <el-menu-item index="profile">
-          <el-icon>
-            <User />
-          </el-icon>
-          <template #title>我的信息</template>
-        </el-menu-item>
-      </el-menu>
-    </el-scrollbar>
+          <el-menu-item index="profile">
+            <el-icon>
+              <User />
+            </el-icon>
+            <template #title>我的信息</template>
+          </el-menu-item>
+        </el-menu>
+      </el-scrollbar>
+      
+      <div class="sidebar-footer">
+        <el-button 
+          type="danger" 
+          size="small" 
+          @click="$emit('logout')"
+          :icon="SwitchButton"
+        >
+          退出登录
+        </el-button>
+      </div>
+    </div>
   </el-aside>
 </template>
 
@@ -57,7 +70,8 @@ import {
   List,
   ChatLineRound,
   Document,
-  Plus
+  Plus,
+  SwitchButton
 } from '@element-plus/icons-vue'
 
 const props = defineProps({
@@ -65,7 +79,7 @@ const props = defineProps({
   activeMenu: String
 })
 
-defineEmits(['menu-select'])
+defineEmits(['menu-select', 'logout'])
 
 const sidebarWidth = computed(() => {
   return props.sidebarCollapsed ? '64px' : '200px'
@@ -78,6 +92,21 @@ const sidebarWidth = computed(() => {
   transition: width 0.3s;
   height: calc(100vh - 60px);
   border-right: 1px solid #dcdfe6;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar-footer {
+  padding: 10px;
+  border-top: 1px solid #dcdfe6;
+  text-align: center;
 }
 
 .sidebar.collapsed {
