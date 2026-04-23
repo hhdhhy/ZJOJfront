@@ -23,13 +23,6 @@
           </el-icon>
           <template #title>创建题目</template>
         </el-menu-item>
-        
-        <el-menu-item index="contest">
-          <el-icon>
-            <Medal />
-          </el-icon>
-          <template #title>竞赛</template>
-        </el-menu-item>
 
         <el-menu-item index="status">
           <el-icon>
@@ -64,7 +57,6 @@ import {
   List,
   ChatLineRound,
   Document,
-  Medal,
   Plus
 } from '@element-plus/icons-vue'
 

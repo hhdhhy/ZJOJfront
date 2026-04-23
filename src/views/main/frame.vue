@@ -100,7 +100,7 @@
               <div v-if="currentPage === 'home'" class="page-content">
                 <el-card class="welcome-card" :shadow="'never'">
                   <h2>欢迎来到 ZJOJ 在线判题系统</h2>
-                  <p>在这里你可以练习编程技能，参与算法竞赛，提升编程能力。</p>
+                  <p>在这里你可以练习编程技能，提升编程能力。</p>
                 </el-card>
               </div>
             </div>
@@ -185,9 +185,6 @@ const goToPage = (page) => {
     case 'submission-detail':
       activeBreadcrumb.value = '提交详情'
       break
-    case 'contest':
-      activeBreadcrumb.value = '竞赛'
-      break
     default:
       activeBreadcrumb.value = '首页'
   }
@@ -214,10 +211,6 @@ const logout = () => {
   }).catch(() => {
     // 取消
   })
-}
-
-const goToContest = () => {
-  ElMessage.info('即将开放竞赛功能')
 }
 
 // 处理查看题目详情
