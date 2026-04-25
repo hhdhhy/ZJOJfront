@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { getStudentReport, getClassReport } from '@/api/modules/ai'
+import { getClassList } from '@/api/modules/class'
 import { ElMessage } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
 
@@ -10,6 +11,17 @@ const report = ref(null)
 const days = ref(7)
 const reportType = ref('student') // student 或 class
 const classId = ref(null)
+const classList = ref([])
+
+// 获取班级列表
+const fetchClassList = async () => {
+  try {
+    const res = await getClassList({ page_size: 100 })
+    classList.value = res.data.results || []
+  } catch (err) {
+    console.error('获取班级列表失败', err)
+  }
+}
 
 // 获取学情报告
 const fetchReport = async () => {
@@ -36,6 +48,7 @@ const fetchReport = async () => {
 }
 
 onMounted(() => {
+  fetchClassList()
   fetchReport()
 })
 </script>
@@ -56,8 +69,12 @@ onMounted(() => {
           placeholder="选择班级"
           style="width: 150px; margin-right: 10px"
         >
-          <el-option label="算法竞赛班" :value="1" />
-          <el-option label="Python基础班" :value="2" />
+          <el-option 
+            v-for="cls in classList" 
+            :key="cls.id" 
+            :label="cls.name" 
+            :value="cls.id" 
+          />
         </el-select>
         <el-select v-model="days" @change="fetchReport" style="width: 150px">
           <el-option label="近7天" :value="7" />
