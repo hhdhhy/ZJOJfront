@@ -63,16 +63,16 @@
               type="textarea"
               :rows="3"
               placeholder="请输入你的问题..."
-              :disabled="loading"
+              :disabled="waitingForAnswer"
               @keydown.ctrl.enter="handleSend"
             />
             <div class="input-actions">
-              <el-checkbox v-model="useRag">使用RAG模式</el-checkbox>
+              <el-checkbox v-model="useRag" :disabled="waitingForAnswer">使用RAG模式</el-checkbox>
               <el-button 
                 type="primary" 
                 @click="handleSend" 
                 :loading="loading"
-                :disabled="!question.trim()"
+                :disabled="!question.trim() || waitingForAnswer"
               >
                 发送 (Ctrl+Enter)
               </el-button>
@@ -155,6 +155,7 @@ const clearing = ref(false)
 const useRag = ref(true)
 const usageStats = ref(null)
 const messagesContainer = ref(null)
+const waitingForAnswer = ref(false) // 是否正在等待AI回答
 
 // 渲染Markdown
 const renderMarkdown = (content) => {
@@ -207,7 +208,13 @@ const fetchChatHistory = async () => {
 
 // 发送消息
 const handleSend = async () => {
-  if (!question.value.trim() || loading.value) return
+  if (!question.value.trim()) return
+  
+  // 如果正在等待AI回答,不允许发送
+  if (waitingForAnswer.value) {
+    ElMessage.warning('请等待AI回答完成')
+    return
+  }
   
   const userQuestion = question.value.trim()
   
@@ -220,6 +227,7 @@ const handleSend = async () => {
   
   question.value = ''
   loading.value = true
+  waitingForAnswer.value = true
   scrollToBottom()
   
   try {
@@ -253,6 +261,7 @@ const handleSend = async () => {
     console.error('AI问答错误:', error)
   } finally {
     loading.value = false
+    waitingForAnswer.value = false
   }
 }
 
