@@ -39,6 +39,13 @@
             <template #title>知识问答</template>
           </el-menu-item>
 
+          <el-menu-item index="classes">
+            <el-icon>
+              <User />
+            </el-icon>
+            <template #title>班级管理</template>
+          </el-menu-item>
+
           <el-menu-item index="profile">
             <el-icon>
               <User />

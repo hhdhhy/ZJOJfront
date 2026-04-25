@@ -77,6 +77,19 @@
                 <KnowledgeQA />
               </div>
 
+              <!-- 班级列表页面 -->
+              <div v-if="currentPage === 'classes'" class="page-content">
+                <ClassList @view-class="handleViewClass" />
+              </div>
+
+              <!-- 班级详情页面 -->
+              <div v-if="currentPage === 'class-detail'" class="page-content">
+                <ClassDetail 
+                  :class-id="currentClassId"
+                  @back="handleClassDetailBack"
+                />
+              </div>
+
               <!-- 评测状态页面 -->
               <div v-if="currentPage === 'status'" class="page-content">
                 <SubmissionList 
@@ -124,6 +137,8 @@ import ProblemEdit from '@/components/ProblemEdit.vue'
 import SubmissionList from '@/components/SubmissionList.vue'
 import SubmissionDetail from '@/components/SubmissionDetail.vue'
 import KnowledgeQA from '@/components/KnowledgeQA.vue'
+import ClassList from './ClassList.vue'
+import ClassDetail from './ClassDetail.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
@@ -138,6 +153,7 @@ const activeMenu = ref('home')
 const activeBreadcrumb = ref('首页')
 const currentProblemId = ref('')
 const currentSubmissionId = ref('')
+const currentClassId = ref(null)
 
 // 方法
 const toggleSidebar = () => {
@@ -177,6 +193,12 @@ const goToPage = (page) => {
     case 'qa':
       activeBreadcrumb.value = '知识问答'
       break
+    case 'classes':
+      activeBreadcrumb.value = '班级管理'
+      break
+    case 'class-detail':
+      activeBreadcrumb.value = '班级详情'
+      break
     case 'status':
       activeBreadcrumb.value = '评测状态'
       break
@@ -190,6 +212,21 @@ const goToPage = (page) => {
 
 const settings = () => {
   ElMessage.info('进入设置页面')
+}
+
+// 查看班级详情
+const handleViewClass = (classId) => {
+  currentClassId.value = classId
+  currentPage.value = 'class-detail'
+  activeMenu.value = 'classes'
+  activeBreadcrumb.value = '班级详情'
+}
+
+// 从班级详情返回
+const handleClassDetailBack = () => {
+  currentPage.value = 'classes'
+  activeMenu.value = 'classes'
+  activeBreadcrumb.value = '班级管理'
 }
 
 const logout = () => {
