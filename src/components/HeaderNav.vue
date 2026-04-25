@@ -32,11 +32,17 @@
 
 <script setup>
 import { Fold, Expand, ArrowDown } from '@element-plus/icons-vue'
+import { watch } from 'vue'
 
 const props = defineProps({
   sidebarCollapsed: Boolean,
   userInfo: Object
 })
+
+// 调试:打印用户信息
+watch(() => props.userInfo, (newVal) => {
+  console.log('HeaderNav userInfo:', newVal)
+}, { immediate: true, deep: true })
 
 const emit = defineEmits(['toggle-sidebar', 'logout'])
 
