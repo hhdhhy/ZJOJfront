@@ -92,6 +92,35 @@
         </el-table>
       </div>
       
+      <!-- 错误解决方案 -->
+      <div v-if="submissionData.result !== 'AC'" class="solution-section">
+        <el-button 
+          type="warning" 
+          size="small" 
+          @click="fetchErrorSolutions"
+          :loading="showSolutions"
+        >
+          查看错误解决方案
+        </el-button>
+        
+        <div v-if="showSolutions && errorSolutions.length > 0" class="solutions-content">
+          <h3>💡 错误解决方案</h3>
+          <el-card 
+            v-for="(solution, index) in errorSolutions" 
+            :key="index" 
+            class="solution-card"
+            :shadow="'hover'"
+          >
+            <h4>{{ solution.title }}</h4>
+            <div class="solution-text" v-html="solution.content"></div>
+            <div class="solution-meta">
+              <el-tag size="small">相似度: {{ (solution.similarity * 100).toFixed(0) }}%</el-tag>
+            </div>
+          </el-card>
+        </div>
+        <el-empty v-else-if="showSolutions" description="未找到相关解决方案" />
+      </div>
+      
       <!-- 代码展示 -->
       <div class="code-section">
         <h3>💻 源代码</h3>
@@ -111,6 +140,7 @@
 import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useSubmissionStore } from '@/stores/submission'
+import { getErrorSolution } from '@/api/modules/ai'
 
 const props = defineProps({
   submissionId: {
@@ -126,6 +156,8 @@ const submissionStore = useSubmissionStore()
 // 响应式数据
 const loading = ref(true)
 const submissionData = ref({})
+const errorSolutions = ref([])
+const showSolutions = ref(false)
 
 // 获取提交详情
 const fetchSubmissionDetail = async () => {
@@ -150,6 +182,18 @@ const goBack = () => {
 const goToProblem = () => {
   if (submissionData.value.problem?.problem_id) {
     emit('view-problem', submissionData.value.problem.problem_id)
+  }
+}
+
+// 获取错误解决方案
+const fetchErrorSolutions = async () => {
+  try {
+    const res = await getErrorSolution(props.submissionId)
+    errorSolutions.value = res.data.solutions || []
+    showSolutions.value = true
+  } catch (err) {
+    ElMessage.error('获取错误解决方案失败')
+    console.error(err)
   }
 }
 
@@ -219,6 +263,41 @@ onMounted(() => {
   margin-bottom: 15px;
   color: #303133;
   font-size: 16px;
+}
+
+.solution-section {
+  margin: 30px 0;
+}
+
+.solutions-content {
+  margin-top: 20px;
+}
+
+.solutions-content h3 {
+  margin-bottom: 15px;
+  font-size: 18px;
+  color: #303133;
+}
+
+.solution-card {
+  margin-bottom: 15px;
+}
+
+.solution-card h4 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  color: #409EFF;
+}
+
+.solution-text {
+  line-height: 1.6;
+  color: #606266;
+  margin-bottom: 10px;
+}
+
+.solution-meta {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .code-section {
