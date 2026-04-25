@@ -46,7 +46,7 @@
             <template #title>班级管理</template>
           </el-menu-item>
 
-          <el-menu-item index="knowledge-base">
+          <el-menu-item v-if="isCoachOrAdmin" index="knowledge-base">
             <el-icon>
               <Document />
             </el-icon>
@@ -82,6 +82,14 @@ import {
   Document,
   Plus
 } from '@element-plus/icons-vue'
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
+
+// 检查是否为教练或管理员
+const isCoachOrAdmin = computed(() => {
+  return authStore.user?.is_staff === true
+})
 
 const props = defineProps({
   sidebarCollapsed: Boolean,
