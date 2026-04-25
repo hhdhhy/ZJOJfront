@@ -31,19 +31,6 @@
               <div class="message-content">
                 <div class="message-text" v-html="renderMarkdown(msg.content)"></div>
                 <div class="message-time">{{ formatTime(msg.time) }}</div>
-                
-                <!-- AI回答的来源 -->
-                <div v-if="msg.sources && msg.sources.length > 0" class="message-sources">
-                  <div class="sources-title">参考来源:</div>
-                  <el-tag 
-                    v-for="(source, idx) in msg.sources" 
-                    :key="idx"
-                    size="small"
-                    style="margin-right: 5px; margin-bottom: 5px;"
-                  >
-                    {{ source.metadata?.title || '文档' + (idx + 1) }}
-                  </el-tag>
-                </div>
               </div>
             </div>
             
@@ -187,15 +174,18 @@ const fetchChatHistory = async () => {
     // 转换格式以适应前端展示
     const history = []
     res.data.results.forEach(item => {
+      const questionTime = new Date(item.created_at)
+      const answerTime = new Date(questionTime.getTime() + 1000) // AI回答比问题晚1秒
+      
       history.push({
         role: 'user',
         content: item.question,
-        time: item.created_at
+        time: questionTime.toISOString()
       })
       history.push({
         role: 'ai',
         content: item.answer,
-        time: item.created_at,
+        time: answerTime.toISOString(),
         sources: item.sources
       })
     })
