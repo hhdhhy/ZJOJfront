@@ -90,6 +90,16 @@
                 />
               </div>
 
+              <!-- 知识库管理页面 -->
+              <div v-if="currentPage === 'knowledge-base'" class="page-content">
+                <KnowledgeBase />
+              </div>
+
+              <!-- 学情报告页面 -->
+              <div v-if="currentPage === 'report'" class="page-content">
+                <StudentReport />
+              </div>
+
               <!-- 评测状态页面 -->
               <div v-if="currentPage === 'status'" class="page-content">
                 <SubmissionList 
@@ -139,6 +149,8 @@ import SubmissionDetail from '@/components/SubmissionDetail.vue'
 import KnowledgeQA from '@/components/KnowledgeQA.vue'
 import ClassList from './ClassList.vue'
 import ClassDetail from './ClassDetail.vue'
+import KnowledgeBase from './KnowledgeBase.vue'
+import StudentReport from './StudentReport.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
@@ -198,6 +210,12 @@ const goToPage = (page) => {
       break
     case 'class-detail':
       activeBreadcrumb.value = '班级详情'
+      break
+    case 'knowledge-base':
+      activeBreadcrumb.value = '知识库管理'
+      break
+    case 'report':
+      activeBreadcrumb.value = '学情报告'
       break
     case 'status':
       activeBreadcrumb.value = '评测状态'

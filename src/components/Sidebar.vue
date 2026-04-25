@@ -46,6 +46,20 @@
             <template #title>班级管理</template>
           </el-menu-item>
 
+          <el-menu-item index="knowledge-base">
+            <el-icon>
+              <Document />
+            </el-icon>
+            <template #title>知识库</template>
+          </el-menu-item>
+
+          <el-menu-item index="report">
+            <el-icon>
+              <Document />
+            </el-icon>
+            <template #title>学情报告</template>
+          </el-menu-item>
+
           <el-menu-item index="profile">
             <el-icon>
               <User />
