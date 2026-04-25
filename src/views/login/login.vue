@@ -59,10 +59,6 @@ const onSubmit = async () => {
     loading.value = false
   }
 }
-
-const handleForgotPassword = () => {
-  router.push({ name: 'forgot-password' })
-}
 </script>
 
 <template>
@@ -109,8 +105,6 @@ const handleForgotPassword = () => {
     </el-button>
 
     <div class="extra-links">
-      <router-link to="/forgot-password" class="link-item">忘记密码？</router-link>
-      <span class="divider">|</span>
       <router-link to="/register" class="link-item">注册新账号</router-link>
     </div>
   </AuthContainer>
