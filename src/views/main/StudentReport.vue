@@ -1,17 +1,31 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getStudentReport } from '@/api/modules/ai'
+import { getStudentReport, getClassReport } from '@/api/modules/ai'
 import { ElMessage } from 'element-plus'
+import { useAuthStore } from '@/stores/auth'
 
+const authStore = useAuthStore()
 const loading = ref(false)
 const report = ref(null)
 const days = ref(7)
+const reportType = ref('student') // student 或 class
+const classId = ref(null)
 
 // 获取学情报告
 const fetchReport = async () => {
   loading.value = true
   try {
-    const res = await getStudentReport({ days: days.value })
+    let res
+    if (reportType.value === 'student') {
+      res = await getStudentReport({ days: days.value })
+    } else {
+      // 教练查看班级报告,需要选择班级
+      if (!classId.value) {
+        ElMessage.warning('请先选择班级')
+        return
+      }
+      res = await getClassReport(classId.value, { days: days.value })
+    }
     report.value = res.data
   } catch (err) {
     ElMessage.error('获取学情报告失败')
@@ -30,11 +44,27 @@ onMounted(() => {
   <div class="report-container">
     <div class="page-header">
       <h2>学情分析报告</h2>
-      <el-select v-model="days" @change="fetchReport" style="width: 150px">
-        <el-option label="近7天" :value="7" />
-        <el-option label="近30天" :value="30" />
-        <el-option label="近90天" :value="90" />
-      </el-select>
+      <div class="header-controls">
+        <el-select v-model="reportType" @change="fetchReport" style="width: 150px; margin-right: 10px">
+          <el-option label="个人报告" value="student" />
+          <el-option label="班级报告" value="class" />
+        </el-select>
+        <el-select 
+          v-if="reportType === 'class'" 
+          v-model="classId" 
+          @change="fetchReport" 
+          placeholder="选择班级"
+          style="width: 150px; margin-right: 10px"
+        >
+          <el-option label="算法竞赛班" :value="1" />
+          <el-option label="Python基础班" :value="2" />
+        </el-select>
+        <el-select v-model="days" @change="fetchReport" style="width: 150px">
+          <el-option label="近7天" :value="7" />
+          <el-option label="近30天" :value="30" />
+          <el-option label="近90天" :value="90" />
+        </el-select>
+      </div>
     </div>
 
     <div v-loading="loading" class="report-content">
@@ -120,6 +150,11 @@ onMounted(() => {
   margin: 0;
   font-size: 24px;
   color: #303133;
+}
+
+.header-controls {
+  display: flex;
+  gap: 10px;
 }
 
 .report-content {
