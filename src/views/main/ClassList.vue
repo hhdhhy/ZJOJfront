@@ -1,7 +1,15 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { getClassList } from '@/api/modules/class'
 import { ElMessage } from 'element-plus'
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
+
+// 检查是否为教练或管理员
+const isCoachOrAdmin = computed(() => {
+  return authStore.user?.is_staff === true
+})
 
 const loading = ref(false)
 const classList = ref([])
@@ -42,6 +50,7 @@ onMounted(() => {
   <div class="class-list-container">
     <div class="page-header">
       <h2>班级管理</h2>
+      <el-button v-if="isCoachOrAdmin" type="primary" @click="$emit('create-class')">创建班级</el-button>
     </div>
 
     <el-table 
