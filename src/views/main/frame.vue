@@ -100,6 +100,11 @@
                 <StudentReport />
               </div>
 
+              <!-- 管理员中心页面 -->
+              <div v-if="currentPage === 'admin'" class="page-content">
+                <AdminPanel />
+              </div>
+
               <!-- 评测状态页面 -->
               <div v-if="currentPage === 'status'" class="page-content">
                 <SubmissionList 
@@ -151,6 +156,7 @@ import ClassList from './ClassList.vue'
 import ClassDetail from './ClassDetail.vue'
 import KnowledgeBase from './KnowledgeBase.vue'
 import StudentReport from './StudentReport.vue'
+import AdminPanel from './AdminPanel.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
@@ -216,6 +222,9 @@ const goToPage = (page) => {
       break
     case 'report':
       activeBreadcrumb.value = '学情报告'
+      break
+    case 'admin':
+      activeBreadcrumb.value = '管理员中心'
       break
     case 'status':
       activeBreadcrumb.value = '评测状态'

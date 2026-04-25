@@ -66,6 +66,13 @@
             </el-icon>
             <template #title>我的信息</template>
           </el-menu-item>
+
+          <el-menu-item v-if="isSuperAdmin" index="admin">
+            <el-icon>
+              <User />
+            </el-icon>
+            <template #title>管理员中心</template>
+          </el-menu-item>
         </el-menu>
       </el-scrollbar>
     </div>
@@ -89,6 +96,11 @@ const authStore = useAuthStore()
 // 检查是否为教练或管理员
 const isCoachOrAdmin = computed(() => {
   return authStore.user?.is_staff === true
+})
+
+// 检查是否为超级管理员
+const isSuperAdmin = computed(() => {
+  return authStore.user?.is_superuser === true
 })
 
 const props = defineProps({
