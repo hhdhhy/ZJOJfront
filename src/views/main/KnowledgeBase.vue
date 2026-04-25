@@ -1,7 +1,15 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { getKnowledgeList, createKnowledge, deleteKnowledge, updateKnowledge } from '@/api/modules/ai'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
+
+// 检查是否为教练或管理员
+const isCoachOrAdmin = computed(() => {
+  return authStore.user?.is_staff === true
+})
 
 const loading = ref(false)
 const knowledgeList = ref([])
@@ -134,7 +142,7 @@ onMounted(() => {
   <div class="knowledge-container">
     <div class="page-header">
       <h2>知识库管理</h2>
-      <el-button type="primary" @click="showCreateDialog = true">新建文档</el-button>
+      <el-button v-if="isCoachOrAdmin" type="primary" @click="showCreateDialog = true">新建文档</el-button>
     </div>
 
     <el-table 
@@ -158,12 +166,16 @@ onMounted(() => {
       <el-table-column label="状态" width="100">
         <template #default="{ row }">
           <el-switch
+            v-if="isCoachOrAdmin"
             v-model="row.is_active"
             @change="handleToggleStatus(row)"
             active-text="启用"
             inactive-text="禁用"
             inline-prompt
           />
+          <el-tag v-else :type="row.is_active ? 'success' : 'info'" size="small">
+            {{ row.is_active ? '启用' : '禁用' }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="created_at" label="创建时间" width="180">
@@ -171,7 +183,7 @@ onMounted(() => {
           {{ new Date(row.created_at).toLocaleString('zh-CN') }}
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="150" fixed="right">
+      <el-table-column label="操作" width="150" fixed="right" v-if="isCoachOrAdmin">
         <template #default="{ row }">
           <el-button 
             type="danger" 
