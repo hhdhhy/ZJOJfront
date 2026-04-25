@@ -87,7 +87,7 @@ onMounted(() => {
     <div v-loading="loading" class="report-content">
       <el-empty v-if="!report" description="暂无报告数据" />
       
-      <template v-else>
+      <template v-else-if="report">
         <!-- 报告摘要 -->
         <el-card class="summary-card">
           <h3>{{ report.report_type }}</h3>
@@ -96,7 +96,7 @@ onMounted(() => {
         </el-card>
 
         <!-- 统计数据 -->
-        <el-row :gutter="20" class="stats-row">
+        <el-row :gutter="20" class="stats-row" v-if="report.statistics">
           <el-col :span="6">
             <el-card class="stat-card">
               <div class="stat-value">{{ report.statistics.total_submissions }}</div>
@@ -124,7 +124,7 @@ onMounted(() => {
         </el-row>
 
         <!-- 错误分布 -->
-        <el-card class="error-card" v-if="report.statistics.error_distribution">
+        <el-card class="error-card" v-if="report && report.statistics && report.statistics.error_distribution">
           <h3>错误分布</h3>
           <el-table :data="Object.entries(report.statistics.error_distribution).map(([key, value]) => ({ type: key, count: value }))" style="width: 100%">
             <el-table-column prop="type" label="错误类型" width="150" />
@@ -133,14 +133,14 @@ onMounted(() => {
         </el-card>
 
         <!-- 建议 -->
-        <el-card class="recommend-card" v-if="report.recommendations">
+        <el-card class="recommend-card" v-if="report.recommendations && report.recommendations.length > 0">
           <h3>学习建议</h3>
           <ul class="recommend-list">
             <li v-for="(item, index) in report.recommendations" :key="index">{{ item }}</li>
           </ul>
         </el-card>
 
-        <div class="generated-time">
+        <div class="generated-time" v-if="report.generated_at">
           生成时间: {{ new Date(report.generated_at).toLocaleString('zh-CN') }}
         </div>
       </template>
