@@ -173,7 +173,10 @@ const fetchChatHistory = async () => {
     const res = await getChatHistory({ limit: 50 })
     // 转换格式以适应前端展示
     const history = []
-    res.data.results.forEach(item => {
+    // 后端返回的可能是倒序(最新在前),需要反转
+    const reversedResults = [...res.data.results].reverse()
+    
+    reversedResults.forEach(item => {
       const questionTime = new Date(item.created_at)
       const answerTime = new Date(questionTime.getTime() + 1000) // AI回答比问题晚1秒
       
