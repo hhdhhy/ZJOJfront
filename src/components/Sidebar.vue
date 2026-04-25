@@ -43,7 +43,7 @@
             <el-icon>
               <User />
             </el-icon>
-            <template #title>班级管理</template>
+            <template #title>{{ isCoachOrAdmin ? '班级管理' : '我的班级' }}</template>
           </el-menu-item>
 
           <el-menu-item v-if="isCoachOrAdmin" index="knowledge-base">
