@@ -7,6 +7,7 @@
           :sidebar-collapsed="sidebarCollapsed" 
           :user-info="authStore.user"
           @toggle-sidebar="toggleSidebar"
+          @logout="logout"
         />
       </el-header>
 
@@ -16,7 +17,6 @@
           :sidebar-collapsed="sidebarCollapsed"
           :active-menu="activeMenu"
           @menu-select="handleMenuSelect"
-          @logout="logout"
         />
 
         <!-- 主内容区 -->

@@ -13,20 +13,36 @@
     </div>
     
     <div class="nav-right">
-      <span class="username">{{ userInfo.username || '用户' }}</span>
+      <el-dropdown @command="handleCommand">
+        <span class="username">
+          {{ userInfo.username || '用户' }}
+          <el-icon class="el-icon--right"><arrow-down /></el-icon>
+        </span>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item command="logout">退出登录</el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
     </div>
   </div>
 </template>
 
 <script setup>
-import { Fold, Expand } from '@element-plus/icons-vue'
+import { Fold, Expand, ArrowDown } from '@element-plus/icons-vue'
 
-defineProps({
+const props = defineProps({
   sidebarCollapsed: Boolean,
   userInfo: Object
 })
 
-defineEmits(['toggle-sidebar'])
+const emit = defineEmits(['toggle-sidebar', 'logout'])
+
+const handleCommand = (command) => {
+  if (command === 'logout') {
+    emit('logout')
+  }
+}
 </script>
 
 <style scoped>

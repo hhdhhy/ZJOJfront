@@ -68,17 +68,6 @@
           </el-menu-item>
         </el-menu>
       </el-scrollbar>
-      
-      <div class="sidebar-footer">
-        <el-button 
-          type="danger" 
-          size="small" 
-          @click="$emit('logout')"
-          :icon="SwitchButton"
-        >
-          退出登录
-        </el-button>
-      </div>
     </div>
   </el-aside>
 </template>
@@ -91,8 +80,7 @@ import {
   List,
   ChatLineRound,
   Document,
-  Plus,
-  SwitchButton
+  Plus
 } from '@element-plus/icons-vue'
 
 const props = defineProps({
@@ -100,7 +88,7 @@ const props = defineProps({
   activeMenu: String
 })
 
-defineEmits(['menu-select', 'logout'])
+defineEmits(['menu-select'])
 
 const sidebarWidth = computed(() => {
   return props.sidebarCollapsed ? '64px' : '200px'
@@ -122,12 +110,6 @@ const sidebarWidth = computed(() => {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-}
-
-.sidebar-footer {
-  padding: 10px;
-  border-top: 1px solid #dcdfe6;
-  text-align: center;
 }
 
 .sidebar.collapsed {
