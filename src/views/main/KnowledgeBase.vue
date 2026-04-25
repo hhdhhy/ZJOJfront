@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getKnowledgeList, createKnowledge, deleteKnowledge } from '@/api/modules/ai'
+import { getKnowledgeList, createKnowledge, deleteKnowledge, updateKnowledge } from '@/api/modules/ai'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 const loading = ref(false)
@@ -95,6 +95,18 @@ const handleDelete = async (id) => {
   }
 }
 
+// 切换启用状态
+const handleToggleStatus = async (row) => {
+  try {
+    await updateKnowledge(row.id, { is_active: !row.is_active })
+    ElMessage.success(row.is_active ? '已禁用' : '已启用')
+    fetchKnowledgeList()
+  } catch (err) {
+    ElMessage.error('操作失败')
+    console.error(err)
+  }
+}
+
 // 重置表单
 const resetForm = () => {
   form.value = {
@@ -143,11 +155,15 @@ onMounted(() => {
           {{ row.error_type || '-' }}
         </template>
       </el-table-column>
-      <el-table-column label="状态" width="80">
+      <el-table-column label="状态" width="100">
         <template #default="{ row }">
-          <el-tag :type="row.is_active ? 'success' : 'info'" size="small">
-            {{ row.is_active ? '启用' : '禁用' }}
-          </el-tag>
+          <el-switch
+            v-model="row.is_active"
+            @change="handleToggleStatus(row)"
+            active-text="启用"
+            inactive-text="禁用"
+            inline-prompt
+          />
         </template>
       </el-table-column>
       <el-table-column prop="created_at" label="创建时间" width="180">
