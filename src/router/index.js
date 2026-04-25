@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import login from "@/views/login/login.vue"
 import register from "@/views/login/register.vue"
+import forgotPassword from "@/views/login/forgot-password.vue"
 import frame from "@/views/main/frame.vue"
 import { useAuthStore } from "@/stores/auth"
 
@@ -21,6 +22,11 @@ const router = createRouter({
       path: '/register',
       name: 'register',
       component: register
+    },
+    {
+      path: '/forgot-password',
+      name: 'forgot-password',
+      component: forgotPassword
     },
   ],
 })

@@ -1,99 +1,81 @@
-<script setup name="login">
-import {reactive, ref} from "vue"
-import { useAuthStore } from "@/stores/auth" 
-import { useRouter } from "vue-router"
-import authHttp from "@/api/authHttp"
+<script setup>
+import { reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import authHttp from '@/api/authHttp'
 import { ElMessage } from 'element-plus'
 import AuthContainer from '@/components/AuthContainer.vue'
 
-const authStore = useAuthStore()
 const router = useRouter()
 const formRef = ref(null)
 const loading = ref(false)
 
-let form_login = reactive({
-  username: "",
-  password: ""
+let form_reset = reactive({
+  email: ''
 })
 
 const onSubmit = async () => {
-  let usernameRex = /^[0-9a-zA-Z_-]{2,20}$/
-  let pwdRgx = /^[0-9a-zA-Z_-]{6,20}$/
+  let emailRex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   
-  if (!usernameRex.test(form_login.username)) {
-    ElMessage.warning("用户名格式错误")
-    return
-  }
-  if (!pwdRgx.test(form_login.password)) {
-    ElMessage.warning("密码格式错误")
+  if (!emailRex.test(form_reset.email)) {
+    ElMessage.warning('请输入有效的邮箱地址')
     return
   }
   
   loading.value = true
   try {
-    // 使用 authHttp.post 直接调用 API
-    const res = await authHttp.post('/api/login/', form_login)
-    let data = res.data
+    await authHttp.post('/api/password/reset/', {
+      email: form_reset.email
+    })
     
-    let token = data.token
-    let user = data.user
-  
-    authStore.setUserToken(user, token)
-    ElMessage.success("登录成功")
-    router.push({ name: "frame" })
+    ElMessage.success('重置密码链接已发送到您的邮箱')
+    // 3秒后跳转到登录页
+    setTimeout(() => {
+      router.push({ name: 'login' })
+    }, 3000)
     
   } catch (err) {
-    let errorMsg = "登录失败"
+    let errorMsg = '发送失败'
     if (err.response && err.response.data) {
-      if (err.response.data.detail) {
-        errorMsg += "：" + err.response.data.detail
-      } else if (err.response.data.error) {
-        errorMsg += "：" + err.response.data.error
+      const data = err.response.data
+      if (data.detail) {
+        errorMsg += ':' + data.detail
+      } else if (data.error) {
+        errorMsg += ':' + data.error
+      } else if (data.message) {
+        errorMsg += ':' + data.message
       } else {
-        errorMsg += "：请检查用户名和密码"
+        errorMsg += ':请检查邮箱地址'
       }
+    } else if (err.code === 'ECONNABORTED') {
+      errorMsg += ':请求超时,请检查网络连接'
+    } else {
+      errorMsg += ':网络错误,请稍后重试'
     }
     ElMessage.error(errorMsg)
-    console.log("登录失败：", err)
+    console.log('重置密码失败:', err)
   } finally {
     loading.value = false
   }
 }
 
-const handleForgotPassword = () => {
-  router.push({ name: 'forgot-password' })
+const goBackToLogin = () => {
+  router.push({ name: 'login' })
 }
 </script>
 
 <template>
-  <AuthContainer title="欢迎回来" subtitle="请输入您的账号信息">
-    <el-form :model="form_login" ref="formRef" @keyup.enter="onSubmit">
+  <AuthContainer title="重置密码" subtitle="输入注册邮箱获取重置链接">
+    <el-form :model="form_reset" ref="formRef" @keyup.enter="onSubmit">
       <el-form-item class="form-item">
         <label class="custom-label">
-          <span class="label-icon"></span>
-          用户名
+          邮箱
         </label>
         <el-input 
-          type="text" 
-          placeholder="请输入用户名" 
+          type="email" 
+          placeholder="请输入注册邮箱" 
           class="input-field" 
-          v-model="form_login.username"
+          v-model="form_reset.email"
           size="small"
-        />
-      </el-form-item>
-
-      <el-form-item class="form-item">
-        <label class="custom-label">
-          <span class="label-icon">🔒</span>
-          密码
-        </label>
-        <el-input 
-          type="password" 
-          placeholder="请输入密码" 
-          class="input-field" 
-          v-model="form_login.password"
-          size="small"
-          show-password
         />
       </el-form-item>
     </el-form>
@@ -104,14 +86,12 @@ const handleForgotPassword = () => {
       :loading="loading"
       type="primary"
     >
-      <span class="btn-text">登 录</span>
+      <span class="btn-text">发送重置链接</span>
       <span class="btn-shine"></span>
     </el-button>
 
     <div class="extra-links">
-      <router-link to="/forgot-password" class="link-item">忘记密码？</router-link>
-      <span class="divider">|</span>
-      <router-link to="/register" class="link-item">注册新账号</router-link>
+      <a href="#" class="link-item" @click.prevent="goBackToLogin">返回登录</a>
     </div>
   </AuthContainer>
 </template>
@@ -123,10 +103,6 @@ const handleForgotPassword = () => {
   position: relative;
 }
 
-.form-item :deep(.el-form-item__content) {
-  display: block;
-}
-
 .custom-label {
   display: flex;
   align-items: center;
@@ -134,11 +110,6 @@ const handleForgotPassword = () => {
   color: #4a5568;
   font-size: 12px;
   font-weight: 600;
-}
-
-.label-icon {
-  margin-right: 3px;
-  font-size: 10px;
 }
 
 .input-field {
@@ -242,10 +213,5 @@ const handleForgotPassword = () => {
 
 .link-item:hover::after {
   width: 100%;
-}
-
-.divider {
-  color: #cbd5e0;
-  user-select: none;
 }
 </style>
