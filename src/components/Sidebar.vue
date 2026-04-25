@@ -18,7 +18,7 @@
             <template #title>题目列表</template>
           </el-menu-item>
           
-          <el-menu-item index="create-problem">
+          <el-menu-item v-if="isCoachOrAdmin" index="create-problem">
             <el-icon>
               <Plus />
             </el-icon>
