@@ -20,6 +20,8 @@ const pageSize = ref(20)
 const fetchClassDetail = async () => {
   try {
     const res = await getClassDetail(props.classId)
+    // 调试:查看后端返回的数据结构
+    console.log('[ClassDetail] 班级详情数据:', res.data)
     classInfo.value = res.data
   } catch (err) {
     ElMessage.error('获取班级详情失败')

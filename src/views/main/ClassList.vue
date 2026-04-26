@@ -25,6 +25,11 @@ const fetchClassList = async () => {
       page: currentPage.value,
       page_size: pageSize.value
     })
+    // 调试:查看后端返回的数据结构
+    console.log('[ClassList] API返回数据:', res.data)
+    if (res.data.data && res.data.data.length > 0) {
+      console.log('[ClassList] 第一条班级数据:', res.data.data[0])
+    }
     // 后端返回格式: {code: 200, message: "...", data: [...]}
     classList.value = res.data.data || []
     total.value = classList.value.length
