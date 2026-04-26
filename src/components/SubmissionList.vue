@@ -109,7 +109,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useSubmissionStore } from '@/stores/submission'
 import { getProblemList } from '@/api'
@@ -118,9 +118,9 @@ const emit = defineEmits(['view-detail', 'view-problem'])
 
 const submissionStore = useSubmissionStore()
 
-// 响应式数据
-const submissions = ref([])
-const loading = ref(false)
+// 响应式数据 - 直接使用store中的数据
+const submissions = computed(() => submissionStore.submissions)
+const loading = computed(() => submissionStore.loading)
 const filterProblemId = ref('')
 const filterResult = ref('')
 const problemOptions = ref([])
@@ -138,7 +138,6 @@ const fetchProblemOptions = async () => {
 
 // 获取提交列表
 const fetchSubmissions = async () => {
-  loading.value = true
   try {
     const params = {}
     if (filterProblemId.value) {
@@ -148,13 +147,11 @@ const fetchSubmissions = async () => {
       params.result = filterResult.value
     }
     
-    const data = await submissionStore.fetchSubmissions(params)
-    submissions.value = data
+    await submissionStore.fetchSubmissions(params)
+    // 不需要手动赋值,store会自动更新submissions
   } catch (error) {
     ElMessage.error('获取提交列表失败')
     console.error(error)
-  } finally {
-    loading.value = false
   }
 }
 
