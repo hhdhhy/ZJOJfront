@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, defineExpose } from 'vue'
 import { getClassList } from '@/api/modules/class'
 import { ElMessage } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
@@ -40,6 +40,11 @@ const handlePageChange = (page) => {
   currentPage.value = page
   fetchClassList()
 }
+
+// 暴露refresh方法给父组件调用
+defineExpose({
+  refresh: fetchClassList
+})
 
 onMounted(() => {
   fetchClassList()

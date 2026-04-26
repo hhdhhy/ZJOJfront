@@ -79,7 +79,7 @@
 
               <!-- 班级列表页面 -->
               <div v-if="currentPage === 'classes'" class="page-content">
-                <ClassList @view-class="handleViewClass" @create-class="showCreateClassDialog = true" />
+                <ClassList ref="classListRef" @view-class="handleViewClass" @create-class="showCreateClassDialog = true" />
               </div>
 
               <!-- 班级详情页面 -->
@@ -194,6 +194,7 @@ const activeBreadcrumb = ref('首页')
 const currentProblemId = ref('')
 const currentSubmissionId = ref('')
 const currentClassId = ref(null)
+const classListRef = ref(null)
 
 // 创建班级相关
 const showCreateClassDialog = ref(false)
@@ -300,10 +301,9 @@ const handleCreateClass = async () => {
     showCreateClassDialog.value = false
     // 重置表单
     createClassForm.value = { name: '', description: '' }
-    // 刷新班级列表
-    if (currentPage.value === 'classes') {
-      // 触发ClassList组件的刷新
-      window.location.reload()
+    // 如果当前在班级页面,刷新列表
+    if (currentPage.value === 'classes' && classListRef.value) {
+      classListRef.value.refresh()
     }
   } catch (err) {
     ElMessage.error('创建失败')
