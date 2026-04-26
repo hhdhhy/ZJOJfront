@@ -306,7 +306,16 @@ const handleCreateClass = async () => {
       classListRef.value.refresh()
     }
   } catch (err) {
-    ElMessage.error('创建失败')
+    // 显示后端返回的具体错误信息
+    let errorMsg = '创建失败'
+    if (err.response && err.response.data) {
+      if (err.response.data.message) {
+        errorMsg = err.response.data.message
+      } else if (err.response.data.detail) {
+        errorMsg = err.response.data.detail
+      }
+    }
+    ElMessage.error(errorMsg)
     console.error(err)
   } finally {
     creatingClass.value = false
