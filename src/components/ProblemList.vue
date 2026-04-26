@@ -114,6 +114,7 @@ const emit = defineEmits(['view-detail'])
 const problems = ref([])
 const tags = ref([])
 const loading = ref(true)
+const deleting = ref(false)  // 防止重复删除
 const searchTitle = ref('')
 const selectedTag = ref(null)
 
@@ -177,6 +178,12 @@ const uploadTestcase = (problemId) => {
 
 // 删除题目
 const handleDeleteProblem = async (problem) => {
+  // 防止重复删除
+  if (deleting.value) {
+    ElMessage.warning('正在删除中,请勿重复操作')
+    return
+  }
+  
   try {
     await ElMessageBox.confirm(
       `确定要删除题目 "${problem.title}" 吗?此操作不可恢复!`,
@@ -188,6 +195,7 @@ const handleDeleteProblem = async (problem) => {
       }
     )
     
+    deleting.value = true
     await deleteProblem(problem.problem_id)
     ElMessage.success('题目删除成功')
     // 刷新列表
@@ -197,6 +205,8 @@ const handleDeleteProblem = async (problem) => {
       console.error('删除题目失败:', error)
       ElMessage.error(error.response?.data?.message || '删除题目失败')
     }
+  } finally {
+    deleting.value = false  // 无论成功失败都释放锁
   }
 }
 

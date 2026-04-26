@@ -17,6 +17,8 @@ const total = ref(0)
 const currentPage = ref(1)
 const pageSize = ref(20)
 const showCreateDialog = ref(false)
+const submitting = ref(false)  // 防止重复提交
+const deleting = ref(false)  // 防止重复删除
 
 // 表单数据
 const form = ref({
@@ -54,11 +56,21 @@ const fetchKnowledgeList = async () => {
       page: currentPage.value,
       page_size: pageSize.value
     })
-    knowledgeList.value = res.data.results || []
-    total.value = res.data.count || 0
+    console.log('知识库列表响应:', res.data)
+    
+    // 后端返回格式: {code, message, data: {data: [], count, ...}}
+    const responseData = res.data.data || {}
+    knowledgeList.value = responseData.data || responseData.results || []
+    total.value = responseData.count || 0
+    
+    console.log('解析后的数据:', {
+      list: knowledgeList.value,
+      total: total.value,
+      firstItem: knowledgeList.value[0]
+    })
   } catch (err) {
     ElMessage.error('获取知识库列表失败')
-    console.error(err)
+    console.error('获取知识库列表错误:', err)
   } finally {
     loading.value = false
   }
@@ -66,11 +78,18 @@ const fetchKnowledgeList = async () => {
 
 // 创建知识库文档
 const handleCreate = async () => {
+  // 防止重复提交
+  if (submitting.value) {
+    ElMessage.warning('正在提交中,请勿重复操作')
+    return
+  }
+  
   if (!form.value.title || !form.value.content) {
     ElMessage.warning('请填写标题和内容')
     return
   }
 
+  submitting.value = true
   try {
     await createKnowledge(form.value)
     ElMessage.success('创建成功')
@@ -78,13 +97,26 @@ const handleCreate = async () => {
     resetForm()
     fetchKnowledgeList()
   } catch (err) {
-    ElMessage.error('创建失败')
-    console.error(err)
+    // 显示后端返回的具体错误信息
+    let errorMsg = '创建失败'
+    if (err.response?.data?.message) {
+      errorMsg = err.response.data.message
+    }
+    ElMessage.error(errorMsg)
+    console.error('创建知识库文档错误:', err)
+  } finally {
+    submitting.value = false  // 无论成功失败都释放锁
   }
 }
 
 // 删除知识库文档
 const handleDelete = async (id) => {
+  // 防止重复删除
+  if (deleting.value) {
+    ElMessage.warning('正在删除中,请勿重复操作')
+    return
+  }
+  
   try {
     await ElMessageBox.confirm('确定要删除该文档吗?', '提示', {
       confirmButtonText: '确定',
@@ -92,14 +124,22 @@ const handleDelete = async (id) => {
       type: 'warning'
     })
     
+    deleting.value = true
     await deleteKnowledge(id)
     ElMessage.success('删除成功')
     fetchKnowledgeList()
   } catch (err) {
     if (err !== 'cancel') {
-      ElMessage.error('删除失败')
-      console.error(err)
+      // 显示后端返回的具体错误信息
+      let errorMsg = '删除失败'
+      if (err.response?.data?.message) {
+        errorMsg = err.response.data.message
+      }
+      ElMessage.error(errorMsg)
+      console.error('删除知识库文档错误:', err)
     }
+  } finally {
+    deleting.value = false  // 无论成功失败都释放锁
   }
 }
 
@@ -188,6 +228,8 @@ onMounted(() => {
           <el-button 
             type="danger" 
             size="small"
+            :loading="deleting"
+            :disabled="deleting"
             @click="handleDelete(row.id)"
           >
             删除
@@ -252,8 +294,8 @@ onMounted(() => {
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showCreateDialog = false">取消</el-button>
-        <el-button type="primary" @click="handleCreate">确定</el-button>
+        <el-button @click="showCreateDialog = false" :disabled="submitting">取消</el-button>
+        <el-button type="primary" @click="handleCreate" :loading="submitting">确定</el-button>
       </template>
     </el-dialog>
   </div>
