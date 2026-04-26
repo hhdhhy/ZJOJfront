@@ -25,8 +25,9 @@ const fetchClassList = async () => {
       page: currentPage.value,
       page_size: pageSize.value
     })
-    classList.value = res.data.results || []
-    total.value = res.data.count || 0
+    // 后端返回格式: {code: 200, message: "...", data: [...]}
+    classList.value = res.data.data || []
+    total.value = classList.value.length
   } catch (err) {
     ElMessage.error('获取班级列表失败')
     console.error(err)
