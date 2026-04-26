@@ -153,7 +153,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['go-back', 'edit-problem'])
+const emit = defineEmits(['go-back', 'edit-problem', 'submit-success'])
 
 const authStore = useAuthStore()
 
@@ -300,8 +300,10 @@ const submitCode = async () => {
         })
         
         if (res.data.message === '代码提交成功') {
-          ElMessage.success('代码提交成功！请在评测状态页面查看结果')
+          ElMessage.success('代码提交成功！正在跳转到评测状态页面...')
           resetSubmitForm()
+          // 通知父组件跳转到评测状态页面
+          emit('submit-success')
         } else {
           ElMessage.error(res.data.message || '提交失败')
         }

@@ -59,6 +59,7 @@
                   :problem-id="currentProblemId" 
                   @go-back="handleProblemDetailGoBack"
                   @edit-problem="handleEditProblem"
+                  @submit-success="handleSubmitSuccess"
                 />
               </div>
 
@@ -368,6 +369,12 @@ const handleTestcaseGoBack = () => {
 // 处理题目详情页面返回
 const handleProblemDetailGoBack = () => {
   goToPage('problems')
+}
+
+// 处理代码提交成功
+const handleSubmitSuccess = () => {
+  // 跳转到评测状态页面
+  goToPage('status')
 }
 
 // 处理编辑题目

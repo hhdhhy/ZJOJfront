@@ -129,7 +129,8 @@ const problemOptions = ref([])
 const fetchProblemOptions = async () => {
   try {
     const res = await getProblemList()
-    problemOptions.value = res.data
+    // 后端可能返回分页格式 {count, next, previous, results} 或直接数组
+    problemOptions.value = res.data.results || res.data || []
   } catch (error) {
     console.error('获取题目列表失败:', error)
   }

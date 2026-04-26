@@ -13,8 +13,9 @@ export const useSubmissionStore = defineStore('submission', () => {
     loading.value = true
     try {
       const res = await getSubmissionList(params)
-      submissions.value = res.data
-      return res.data
+      // 后端可能返回分页格式 {count, next, previous, results} 或直接数组
+      submissions.value = res.data.results || res.data || []
+      return submissions.value
     } catch (error) {
       console.error('获取提交列表失败:', error)
       throw error
