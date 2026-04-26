@@ -132,7 +132,9 @@ const handleDelete = async (id) => {
     if (err !== 'cancel') {
       // 显示后端返回的具体错误信息
       let errorMsg = '删除失败'
-      if (err.response?.data?.message) {
+      if (err.response?.status === 404) {
+        errorMsg = '删除接口不可用,请联系管理员检查后端配置'
+      } else if (err.response?.data?.message) {
         errorMsg = err.response.data.message
       }
       ElMessage.error(errorMsg)
