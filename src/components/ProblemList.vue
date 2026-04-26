@@ -218,6 +218,7 @@ const handleDeleteProblem = async (problem) => {
 
 // 初始化
 onMounted(() => {
+  console.log('ProblemList组件已加载')
   fetchTags()
   fetchProblems()
 })
