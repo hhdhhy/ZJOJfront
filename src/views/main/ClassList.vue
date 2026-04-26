@@ -26,16 +26,20 @@ const fetchClassList = async () => {
       page_size: pageSize.value
     })
     // 调试:查看后端返回的数据结构
-    console.log('[ClassList] API返回数据:', res.data)
-    if (res.data.data && res.data.data.length > 0) {
+    console.log('[ClassList] API返回的res对象:', res)
+    console.log('[ClassList] API返回的res.data:', res.data)
+    console.log('[ClassList] classList准备使用的数据:', res.data?.data || res.data?.results || res.data)
+    if (res.data?.data && res.data.data.length > 0) {
       console.log('[ClassList] 第一条班级数据:', res.data.data[0])
+    } else if (res.data?.results && res.data.results.length > 0) {
+      console.log('[ClassList] 使用results字段,第一条数据:', res.data.results[0])
     }
     // 后端返回格式: {code: 200, message: "...", data: [...]}
-    classList.value = res.data.data || []
+    classList.value = res.data?.data || res.data?.results || []
     total.value = classList.value.length
   } catch (err) {
     ElMessage.error('获取班级列表失败')
-    console.error(err)
+    console.error('[ClassList] 请求失败:', err)
   } finally {
     loading.value = false
   }

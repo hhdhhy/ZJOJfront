@@ -21,11 +21,12 @@ const fetchClassDetail = async () => {
   try {
     const res = await getClassDetail(props.classId)
     // 调试:查看后端返回的数据结构
+    console.log('[ClassDetail] API返回的res对象:', res)
     console.log('[ClassDetail] 班级详情数据:', res.data)
     classInfo.value = res.data
   } catch (err) {
     ElMessage.error('获取班级详情失败')
-    console.error(err)
+    console.error('[ClassDetail] 请求失败:', err)
   }
 }
 
