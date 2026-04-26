@@ -54,17 +54,21 @@
       <el-table-column prop="id" label="提交ID" width="100" />
       <el-table-column label="题目" min-width="180">
         <template #default="scope">
-          <el-link type="primary" @click.stop="goToProblem(scope.row.problem.problem_id)">
-            {{ scope.row.problem.title }}
+          <el-link type="primary" @click.stop="goToProblem(scope.row.problem_id)">
+            {{ scope.row.problem_title }}
           </el-link>
         </template>
       </el-table-column>
       <el-table-column label="用户" width="120">
         <template #default="scope">
-          {{ scope.row.user.username }}
+          {{ scope.row.username }}
         </template>
       </el-table-column>
-      <el-table-column prop="language" label="语言" width="100" />
+      <el-table-column label="语言" width="120">
+        <template #default="scope">
+          {{ scope.row.language_display || scope.row.language }}
+        </template>
+      </el-table-column>
       <el-table-column label="状态" width="120">
         <template #default="scope">
           <el-tag 
@@ -95,7 +99,7 @@
       </el-table-column>
       <el-table-column label="内存使用" width="120">
         <template #default="scope">
-          {{ scope.row.memory_usage ? scope.row.memory_usage + 'KB' : '-' }}
+          {{ scope.row.memory_usage ? (scope.row.memory_usage / 1024).toFixed(2) + 'KB' : '-' }}
         </template>
       </el-table-column>
       <el-table-column prop="submit_time" label="提交时间" width="180">
@@ -158,11 +162,6 @@ const fetchSubmissions = async () => {
     }
     
     await submissionStore.fetchSubmissions(params)
-    
-    // 调试:打印第一条数据看看结构
-    if (submissions.value.length > 0) {
-      console.log('[SubmissionList] API返回的第一条数据:', submissions.value[0])
-    }
     // 不需要手动赋值,store会自动更新submissions
   } catch (error) {
     ElMessage.error('获取提交列表失败')
