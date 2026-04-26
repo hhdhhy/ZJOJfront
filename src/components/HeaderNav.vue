@@ -16,8 +16,8 @@
       <el-dropdown @command="handleCommand">
         <span class="username">
           {{ userInfo.username || '用户' }}
-          <el-tag v-if="userInfo.role === 3" size="small" type="warning" style="margin-left: 8px;">管理员</el-tag>
-          <el-tag v-else-if="userInfo.role === 2" size="small" type="danger" style="margin-left: 8px;">教练</el-tag>
+          <el-tag v-if="userInfo.is_staff" size="small" type="danger" style="margin-left: 8px;">教练</el-tag>
+          <el-tag v-else-if="userInfo.is_superuser" size="small" type="warning" style="margin-left: 8px;">管理员</el-tag>
           <el-icon class="el-icon--right"><arrow-down /></el-icon>
         </span>
         <template #dropdown>
