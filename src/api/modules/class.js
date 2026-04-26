@@ -9,6 +9,11 @@ export const getClassList = (params = {}) => {
   return authHttp.get('/api/classes/', { params });
 };
 
+// 创建班级
+export const createClass = (data) => {
+  return authHttp.post('/api/classes/', data);
+};
+
 // 获取班级详情
 export const getClassDetail = (classId) => {
   return authHttp.get(`/api/classes/${classId}/`);

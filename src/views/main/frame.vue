@@ -79,7 +79,7 @@
 
               <!-- 班级列表页面 -->
               <div v-if="currentPage === 'classes'" class="page-content">
-                <ClassList @view-class="handleViewClass" />
+                <ClassList @view-class="handleViewClass" @create-class="showCreateClassDialog = true" />
               </div>
 
               <!-- 班级详情页面 -->
@@ -134,6 +134,27 @@
         </el-main>
       </el-container>
     </el-container>
+
+    <!-- 创建班级对话框 -->
+    <el-dialog v-model="showCreateClassDialog" title="创建班级" width="500px">
+      <el-form :model="createClassForm" label-width="100px">
+        <el-form-item label="班级名称" required>
+          <el-input v-model="createClassForm.name" placeholder="请输入班级名称" />
+        </el-form-item>
+        <el-form-item label="班级描述">
+          <el-input 
+            v-model="createClassForm.description" 
+            type="textarea" 
+            :rows="3"
+            placeholder="请输入班级描述（可选）" 
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="showCreateClassDialog = false">取消</el-button>
+        <el-button type="primary" @click="handleCreateClass" :loading="creatingClass">确定</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -157,6 +178,7 @@ import ClassDetail from './ClassDetail.vue'
 import KnowledgeBase from './KnowledgeBase.vue'
 import StudentReport from './StudentReport.vue'
 import AdminPanel from './AdminPanel.vue'
+import { createClass } from '@/api/modules/class'
 import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
@@ -172,6 +194,14 @@ const activeBreadcrumb = ref('首页')
 const currentProblemId = ref('')
 const currentSubmissionId = ref('')
 const currentClassId = ref(null)
+
+// 创建班级相关
+const showCreateClassDialog = ref(false)
+const creatingClass = ref(false)
+const createClassForm = ref({
+  name: '',
+  description: ''
+})
 
 // 方法
 const toggleSidebar = () => {
@@ -253,7 +283,34 @@ const handleViewClass = (classId) => {
 const handleClassDetailBack = () => {
   currentPage.value = 'classes'
   activeMenu.value = 'classes'
-  activeBreadcrumb.value = '班级管理'
+  activeBreadcrumb.value = authStore.user?.is_staff ? '班级管理' : '我的班级'
+}
+
+// 创建班级
+const handleCreateClass = async () => {
+  if (!createClassForm.value.name.trim()) {
+    ElMessage.warning('请输入班级名称')
+    return
+  }
+
+  creatingClass.value = true
+  try {
+    await createClass(createClassForm.value)
+    ElMessage.success('创建成功')
+    showCreateClassDialog.value = false
+    // 重置表单
+    createClassForm.value = { name: '', description: '' }
+    // 刷新班级列表
+    if (currentPage.value === 'classes') {
+      // 触发ClassList组件的刷新
+      window.location.reload()
+    }
+  } catch (err) {
+    ElMessage.error('创建失败')
+    console.error(err)
+  } finally {
+    creatingClass.value = false
+  }
 }
 
 const logout = () => {
