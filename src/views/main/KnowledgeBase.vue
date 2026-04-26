@@ -57,9 +57,9 @@ const fetchKnowledgeList = async () => {
     })
     console.log('知识库列表响应:', res.data)
     
-    // 后端返回格式: {code, message, data: {data: [], count, ...}}
-    const responseData = res.data.data || {}
-    knowledgeList.value = responseData.data || responseData.results || []
+    // 后端返回格式: {code, message, data: {count, page, page_size, results: []}}
+    const responseData = res.data.data || res.data
+    knowledgeList.value = responseData.results || []
     total.value = responseData.count || 0
     
     console.log('解析后的数据:', {
