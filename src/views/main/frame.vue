@@ -214,6 +214,7 @@ const handleMenuSelect = (index) => {
 }
 
 const goToPage = (page) => {
+  console.log('切换到页面:', page)
   currentPage.value = page
   activeMenu.value = page
   
