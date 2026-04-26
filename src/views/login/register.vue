@@ -109,10 +109,7 @@ const goBackToLogin = () => {
 <template>
   <AuthContainer title="创建新账号" subtitle="填写以下信息完成注册">
     <el-form :model="form_register" ref="formRef" @keyup.enter="onSubmit">
-      <el-form-item class="form-item">
-        <label class="custom-label">
-          用户名
-        </label>
+      <el-form-item label="用户名" class="form-item">
         <el-input 
           type="text" 
           placeholder="请输入用户名（2-20位）" 
@@ -122,10 +119,7 @@ const goBackToLogin = () => {
         />
       </el-form-item>
 
-      <el-form-item class="form-item">
-        <label class="custom-label">
-          密码
-        </label>
+      <el-form-item label="密码" class="form-item">
         <el-input 
           type="password" 
           placeholder="请输入密码（6-20位）" 
@@ -136,10 +130,7 @@ const goBackToLogin = () => {
         />
       </el-form-item>
 
-      <el-form-item class="form-item">
-        <label class="custom-label">
-          确认密码
-        </label>
+      <el-form-item label="确认密码" class="form-item">
         <el-input 
           type="password" 
           placeholder="请再次输入密码" 
@@ -150,10 +141,7 @@ const goBackToLogin = () => {
         />
       </el-form-item>
 
-      <el-form-item class="form-item">
-        <label class="custom-label">
-          邮箱
-        </label>
+      <el-form-item label="邮箱" class="form-item">
         <el-input 
           type="email" 
           placeholder="请输入邮箱地址" 
@@ -163,10 +151,7 @@ const goBackToLogin = () => {
         />
       </el-form-item>
 
-      <el-form-item class="form-item">
-        <label class="custom-label">
-          真实姓名
-        </label>
+      <el-form-item label="真实姓名" class="form-item">
         <el-input 
           type="text" 
           placeholder="请输入您的真实姓名" 
@@ -176,10 +161,7 @@ const goBackToLogin = () => {
         />
       </el-form-item>
 
-      <el-form-item class="form-item">
-        <label class="custom-label">
-          手机号（可选）
-        </label>
+      <el-form-item label="手机号（可选）" class="form-item">
         <el-input 
           type="tel" 
           placeholder="请输入手机号（可选）" 
@@ -213,13 +195,13 @@ const goBackToLogin = () => {
   position: relative;
 }
 
-.custom-label {
+.form-item :deep(.el-form-item__label) {
   display: flex;
   align-items: center;
-  margin-bottom: 4px;
   color: #4a5568;
   font-size: 12px;
   font-weight: 600;
+  padding-bottom: 4px;
 }
 
 .input-field {

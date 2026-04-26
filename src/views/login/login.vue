@@ -64,11 +64,7 @@ const onSubmit = async () => {
 <template>
   <AuthContainer title="欢迎回来" subtitle="请输入您的账号信息">
     <el-form :model="form_login" ref="formRef" @keyup.enter="onSubmit">
-      <el-form-item class="form-item">
-        <label class="custom-label">
-          <span class="label-icon"></span>
-          用户名
-        </label>
+      <el-form-item label="用户名" class="form-item">
         <el-input 
           type="text" 
           placeholder="请输入用户名" 
@@ -78,11 +74,7 @@ const onSubmit = async () => {
         />
       </el-form-item>
 
-      <el-form-item class="form-item">
-        <label class="custom-label">
-          <span class="label-icon">🔒</span>
-          密码
-        </label>
+      <el-form-item label="密码" class="form-item">
         <el-input 
           type="password" 
           placeholder="请输入密码" 
@@ -121,18 +113,13 @@ const onSubmit = async () => {
   display: block;
 }
 
-.custom-label {
+.form-item :deep(.el-form-item__label) {
   display: flex;
   align-items: center;
-  margin-bottom: 4px;
   color: #4a5568;
   font-size: 12px;
   font-weight: 600;
-}
-
-.label-icon {
-  margin-right: 3px;
-  font-size: 10px;
+  padding-bottom: 4px;
 }
 
 .input-field {
