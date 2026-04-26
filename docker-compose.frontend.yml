@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  zjoj-frontend:
+    build: .
+    container_name: zjoj-frontend
+    restart: always
+    ports:
+      - "80:80"
+    networks:
+      - zjoj-network
+
+networks:
+  zjoj-network:
+    external: true
+    name: zjoj-backend_zjoj-network
