@@ -49,7 +49,7 @@ const fetchReport = async () => {
 
 onMounted(() => {
   // 学生只能看个人报告
-  if (!authStore.user?.is_staff) {
+  if (authStore.user?.role < 2) {
     reportType.value = 'student'
   }
   fetchClassList()
@@ -62,7 +62,7 @@ onMounted(() => {
     <div class="page-header">
       <h2>学情分析报告</h2>
       <div class="header-controls">
-        <el-select v-if="authStore.user?.is_staff" v-model="reportType" @change="fetchReport" style="width: 150px; margin-right: 10px">
+        <el-select v-if="authStore.user?.role >= 2" v-model="reportType" @change="fetchReport" style="width: 150px; margin-right: 10px">
           <el-option label="个人报告" value="student" />
           <el-option label="班级报告" value="class" />
         </el-select>

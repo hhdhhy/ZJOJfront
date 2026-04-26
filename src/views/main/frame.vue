@@ -242,7 +242,7 @@ const goToPage = (page) => {
       activeBreadcrumb.value = '知识问答'
       break
     case 'classes':
-      activeBreadcrumb.value = authStore.user?.is_staff ? '班级管理' : '我的班级'
+      activeBreadcrumb.value = authStore.user?.role >= 2 ? '班级管理' : '我的班级'
       break
     case 'class-detail':
       activeBreadcrumb.value = '班级详情'
@@ -283,7 +283,7 @@ const handleViewClass = (classId) => {
 const handleClassDetailBack = () => {
   currentPage.value = 'classes'
   activeMenu.value = 'classes'
-  activeBreadcrumb.value = authStore.user?.is_staff ? '班级管理' : '我的班级'
+  activeBreadcrumb.value = authStore.user?.role >= 2 ? '班级管理' : '我的班级'
 }
 
 // 创建班级

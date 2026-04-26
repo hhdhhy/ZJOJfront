@@ -8,7 +8,7 @@ const authStore = useAuthStore()
 
 // 检查是否为教练或管理员
 const isCoachOrAdmin = computed(() => {
-  return authStore.user?.is_staff === true
+  return authStore.user?.role >= 2
 })
 
 const loading = ref(false)

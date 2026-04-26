@@ -95,12 +95,12 @@ const authStore = useAuthStore()
 
 // 检查是否为教练或管理员
 const isCoachOrAdmin = computed(() => {
-  return authStore.user?.is_staff === true
+  return authStore.user?.role >= 2
 })
 
 // 检查是否为超级管理员
 const isSuperAdmin = computed(() => {
-  return authStore.user?.is_superuser === true
+  return authStore.user?.role === 3
 })
 
 const props = defineProps({
