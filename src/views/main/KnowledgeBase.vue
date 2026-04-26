@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import { getKnowledgeList, createKnowledge, deleteKnowledge, updateKnowledge } from '@/api/modules/ai'
+import { getKnowledgeList, createKnowledge, deleteKnowledge } from '@/api/modules/ai'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
 
@@ -26,8 +26,7 @@ const form = ref({
   content: '',
   doc_type: 'algorithm',
   tag_names: [],
-  error_type: '',
-  is_active: true
+  error_type: ''
 })
 
 // 文档类型选项
@@ -145,18 +144,6 @@ const handleDelete = async (id) => {
   }
 }
 
-// 切换启用状态
-const handleToggleStatus = async (row) => {
-  try {
-    await updateKnowledge(row.id, { is_active: !row.is_active })
-    ElMessage.success(row.is_active ? '已禁用' : '已启用')
-    fetchKnowledgeList()
-  } catch (err) {
-    ElMessage.error('操作失败')
-    console.error(err)
-  }
-}
-
 // 重置表单
 const resetForm = () => {
   form.value = {
@@ -164,8 +151,7 @@ const resetForm = () => {
     content: '',
     doc_type: 'algorithm',
     tag_names: [],
-    error_type: '',
-    is_active: true
+    error_type: ''
   }
 }
 
@@ -203,21 +189,6 @@ onMounted(() => {
       <el-table-column prop="error_type" label="错误类型" width="100">
         <template #default="{ row }">
           {{ row.error_type || '-' }}
-        </template>
-      </el-table-column>
-      <el-table-column label="状态" width="100">
-        <template #default="{ row }">
-          <el-switch
-            v-if="isCoachOrAdmin"
-            v-model="row.is_active"
-            @change="handleToggleStatus(row)"
-            active-text="启用"
-            inactive-text="禁用"
-            inline-prompt
-          />
-          <el-tag v-else :type="row.is_active ? 'success' : 'info'" size="small">
-            {{ row.is_active ? '启用' : '禁用' }}
-          </el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="created_at" label="创建时间" width="180">
@@ -290,9 +261,6 @@ onMounted(() => {
         </el-form-item>
         <el-form-item label="标签">
           <el-input v-model="form.tag_names" placeholder="输入标签，用逗号分隔" />
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-switch v-model="form.is_active" active-text="启用" inactive-text="禁用" />
         </el-form-item>
       </el-form>
       <template #footer>
