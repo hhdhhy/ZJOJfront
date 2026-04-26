@@ -131,7 +131,10 @@ const debouncedSearch = () => {
 const fetchTags = async () => {
   try {
     const res = await getTagList()
-    tags.value = res.data
+    console.log('标签列表响应:', res.data)
+    // 后端返回格式: {count, next, previous, results: []}
+    tags.value = res.data.results || res.data || []
+    console.log('解析后的标签列表:', tags.value)
   } catch (error) {
     console.error('获取标签列表失败:', error)
     // 即使标签获取失败，也要继续获取题目列表
