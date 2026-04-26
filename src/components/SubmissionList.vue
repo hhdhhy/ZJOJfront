@@ -79,13 +79,13 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="结果" width="180">
+      <el-table-column label="结果" width="120">
         <template #default="scope">
           <el-tag 
             :type="getResultType(scope.row.result)" 
             disable-transitions
           >
-            {{ scope.row.result_display || scope.row.result || '-' }}
+            {{ scope.row.result || '-' }}
           </el-tag>
           <span v-if="scope.row.score !== undefined && scope.row.score !== null" style="margin-left: 8px;">
             {{ scope.row.score }}分
