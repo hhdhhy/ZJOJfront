@@ -373,6 +373,7 @@ const handleProblemDetailGoBack = () => {
 
 // 处理代码提交成功
 const handleSubmitSuccess = () => {
+  console.log('[frame.vue] 收到submit-success事件,准备跳转到status页面')
   // 跳转到评测状态页面
   goToPage('status')
 }

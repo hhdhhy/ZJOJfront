@@ -303,6 +303,7 @@ const submitCode = async () => {
           ElMessage.success('代码提交成功！正在跳转到评测状态页面...')
           resetSubmitForm()
           // 通知父组件跳转到评测状态页面
+          console.log('[ProblemDetail] 发送submit-success事件')
           emit('submit-success')
         } else {
           ElMessage.error(res.data.message || '提交失败')

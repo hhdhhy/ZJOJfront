@@ -65,15 +65,25 @@
         </template>
       </el-table-column>
       <el-table-column prop="language" label="语言" width="100" />
+      <el-table-column label="状态" width="120">
+        <template #default="scope">
+          <el-tag 
+            :type="getStatusType(scope.row.status)" 
+            disable-transitions
+          >
+            {{ scope.row.status_display || getStatusText(scope.row.status) }}
+          </el-tag>
+        </template>
+      </el-table-column>
       <el-table-column label="结果" width="180">
         <template #default="scope">
           <el-tag 
             :type="getResultType(scope.row.result)" 
             disable-transitions
           >
-            {{ scope.row.result_display || scope.row.result }}
+            {{ scope.row.result_display || scope.row.result || '-' }}
           </el-tag>
-          <span v-if="scope.row.score !== undefined" style="margin-left: 8px;">
+          <span v-if="scope.row.score !== undefined && scope.row.score !== null" style="margin-left: 8px;">
             {{ scope.row.score }}分
           </span>
         </template>
@@ -172,8 +182,31 @@ const formatDate = (dateString) => {
   return date.toLocaleString('zh-CN')
 }
 
+// 获取状态类型(正在评测/已完成等)
+const getStatusType = (status) => {
+  const typeMap = {
+    0: 'info',      // 等待评测
+    1: 'warning',   // 正在评测
+    2: 'success',   // 已完成
+    3: 'danger'     // 评测失败
+  }
+  return typeMap[status] || 'info'
+}
+
+// 获取状态文本(如果后端没有返回status_display)
+const getStatusText = (status) => {
+  const textMap = {
+    0: '等待评测',
+    1: '正在评测',
+    2: '已完成',
+    3: '评测失败'
+  }
+  return textMap[status] || '未知'
+}
+
 // 获取结果类型
 const getResultType = (result) => {
+  if (!result) return 'info'
   const typeMap = {
     'AC': 'success',
     'WA': 'danger',
