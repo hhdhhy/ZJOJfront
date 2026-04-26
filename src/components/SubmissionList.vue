@@ -158,6 +158,11 @@ const fetchSubmissions = async () => {
     }
     
     await submissionStore.fetchSubmissions(params)
+    
+    // 调试:打印第一条数据看看结构
+    if (submissions.value.length > 0) {
+      console.log('[SubmissionList] API返回的第一条数据:', submissions.value[0])
+    }
     // 不需要手动赋值,store会自动更新submissions
   } catch (error) {
     ElMessage.error('获取提交列表失败')
