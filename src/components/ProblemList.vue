@@ -151,7 +151,10 @@ const fetchProblems = async () => {
     }
     
     const res = await getProblemList(params)
-    problems.value = res.data
+    console.log('题目列表响应:', res.data)
+    // 后端返回格式: {count, next, previous, results: []}
+    problems.value = res.data.results || res.data || []
+    console.log('解析后的题目列表:', problems.value)
   } catch (error) {
     ElMessage.error('获取题目列表失败')
     console.error(error)
