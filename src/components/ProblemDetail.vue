@@ -294,7 +294,7 @@ const submitCode = async () => {
       submitting.value = true
       try {
         const res = await apiSubmitCode({
-          problem_id: props.problemId,
+          problem: props.problemId,
           language: submitForm.value.language,
           code: submitForm.value.code
         })
