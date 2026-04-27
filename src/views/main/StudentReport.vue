@@ -109,28 +109,28 @@ onMounted(() => {
           </el-col>
           <el-col :span="6">
             <el-card class="stat-card">
-              <div class="stat-value">{{ report.statistics.accepted_count }}</div>
+              <div class="stat-value">{{ report.statistics.ac_count || 0 }}</div>
               <div class="stat-label">通过数</div>
             </el-card>
           </el-col>
           <el-col :span="6">
             <el-card class="stat-card">
-              <div class="stat-value">{{ (report.statistics.acceptance_rate * 100).toFixed(1) }}%</div>
+              <div class="stat-value">{{ report.statistics.ac_rate || 0 }}%</div>
               <div class="stat-label">通过率</div>
             </el-card>
           </el-col>
           <el-col :span="6">
             <el-card class="stat-card">
-              <div class="stat-value">{{ report.statistics.problem_solved }}</div>
+              <div class="stat-value">{{ report.statistics.total_submissions - report.statistics.unsolved_count || 0 }}</div>
               <div class="stat-label">解决题目数</div>
             </el-card>
           </el-col>
         </el-row>
 
         <!-- 错误分布 -->
-        <el-card class="error-card" v-if="report && report.statistics && report.statistics.error_distribution">
+        <el-card class="error-card" v-if="report && report.statistics && report.statistics.common_errors">
           <h3>错误分布</h3>
-          <el-table :data="Object.entries(report.statistics.error_distribution).map(([key, value]) => ({ type: key, count: value }))" style="width: 100%">
+          <el-table :data="Object.entries(report.statistics.common_errors).map(([key, value]) => ({ type: key, count: value }))" style="width: 100%">
             <el-table-column prop="type" label="错误类型" width="150" />
             <el-table-column prop="count" label="次数" width="100" />
           </el-table>
