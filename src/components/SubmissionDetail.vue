@@ -114,7 +114,7 @@
             <h4>{{ solution.title }}</h4>
             <div class="solution-text" v-html="solution.content"></div>
             <div class="solution-meta">
-              <el-tag size="small">相似度: {{ (solution.similarity * 100).toFixed(0) }}%</el-tag>
+              <el-tag v-if="solution.similarity !== undefined && solution.similarity !== null" size="small">相似度: {{ (solution.similarity * 100).toFixed(0) }}%</el-tag>
             </div>
           </el-card>
         </div>
