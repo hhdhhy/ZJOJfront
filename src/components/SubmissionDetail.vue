@@ -297,6 +297,9 @@ onMounted(() => {
 
 .solution-card {
   margin-bottom: 15px;
+}
+
+.solution-card :deep(.el-card__body) {
   max-height: 500px;
   overflow-y: auto;
 }
