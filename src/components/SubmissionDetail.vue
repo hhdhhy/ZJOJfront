@@ -98,7 +98,7 @@
           type="warning" 
           size="small" 
           @click="fetchErrorSolutions"
-          :loading="showSolutions"
+          :loading="solutionLoading"
         >
           查看错误解决方案
         </el-button>
@@ -159,6 +159,7 @@ const loading = ref(true)
 const submissionData = ref({})
 const errorSolutions = ref([])
 const showSolutions = ref(false)
+const solutionLoading = ref(false)
 
 // 获取提交详情
 const fetchSubmissionDetail = async () => {
@@ -194,6 +195,7 @@ const renderMarkdown = (content) => {
 
 // 获取错误解决方案
 const fetchErrorSolutions = async () => {
+  solutionLoading.value = true
   try {
     const res = await getErrorSolution(props.submissionId)
     console.log('API返回数据:', res.data)
@@ -206,6 +208,8 @@ const fetchErrorSolutions = async () => {
   } catch (err) {
     ElMessage.error('获取错误解决方案失败')
     console.error('错误详情:', err)
+  } finally {
+    solutionLoading.value = false
   }
 }
 
