@@ -114,7 +114,7 @@
             <h4>{{ solution.title }}</h4>
             <div class="solution-text markdown-body" v-html="renderMarkdown(solution.content)"></div>
             <div class="solution-meta">
-              <el-tag v-if="solution.similarity !== undefined && solution.similarity !== null" size="small">相似度: {{ (solution.similarity * 100).toFixed(0) }}%</el-tag>
+              <el-tag v-if="solution.relevance_score !== undefined && solution.relevance_score !== null" size="small">相似度: {{ (solution.relevance_score * 100).toFixed(0) }}%</el-tag>
             </div>
           </el-card>
         </div>
@@ -196,11 +196,16 @@ const renderMarkdown = (content) => {
 const fetchErrorSolutions = async () => {
   try {
     const res = await getErrorSolution(props.submissionId)
+    console.log('API返回数据:', res.data)
     errorSolutions.value = res.data.solutions || []
+    console.log('解决方案数量:', errorSolutions.value.length)
+    if (errorSolutions.value.length > 0) {
+      console.log('第一个解决方案:', errorSolutions.value[0])
+    }
     showSolutions.value = true
   } catch (err) {
     ElMessage.error('获取错误解决方案失败')
-    console.error(err)
+    console.error('错误详情:', err)
   }
 }
 
