@@ -43,11 +43,13 @@ const fetchMembers = async () => {
       page: currentPage.value,
       page_size: pageSize.value
     })
-    members.value = res.data.results || []
-    memberTotal.value = res.data.count || 0
+    // 实际返回结构: {code: 200, message: "...", data: {members: [...], member_count: N}}
+    const responseData = res.data.data || res.data
+    members.value = responseData.members || []
+    memberTotal.value = responseData.member_count || 0
   } catch (err) {
     ElMessage.error('获取成员列表失败')
-    console.error(err)
+    console.error('[ClassDetail] 成员列表请求失败:', err)
   } finally {
     loading.value = false
   }
@@ -152,24 +154,24 @@ onMounted(() => {
       >
         <el-table-column label="用户名" width="150">
           <template #default="{ row }">
-            {{ row.user?.username || '-' }}
+            {{ row.username || '-' }}
           </template>
         </el-table-column>
         <el-table-column label="姓名" width="150">
           <template #default="{ row }">
-            {{ row.user?.realname || '-' }}
+            {{ row.realname || '-' }}
           </template>
         </el-table-column>
-        <el-table-column prop="role" label="角色" width="100">
+        <el-table-column label="角色" width="100">
           <template #default="{ row }">
-            <el-tag :type="row.role === 'coach' ? 'success' : 'info'" size="small">
-              {{ row.role === 'coach' ? '教练' : '学生' }}
+            <el-tag type="info" size="small">
+              学生
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="joined_at" label="加入时间" width="180">
+        <el-table-column label="加入时间" width="180">
           <template #default="{ row }">
-            {{ new Date(row.joined_at).toLocaleString('zh-CN') }}
+            {{ row.join_time ? new Date(row.join_time).toLocaleString('zh-CN') : '-' }}
           </template>
         </el-table-column>
         <el-table-column label="操作" width="100" fixed="right">
@@ -177,7 +179,7 @@ onMounted(() => {
             <el-button 
               type="danger" 
               size="small"
-              @click="handleRemoveMember(row.user?.uid)"
+              @click="handleRemoveMember(row.uid)"
             >
               移除
             </el-button>
