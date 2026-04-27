@@ -164,8 +164,8 @@ onMounted(() => {
         </el-table-column>
         <el-table-column label="角色" width="100">
           <template #default="{ row }">
-            <el-tag :type="classInfo?.coach === row.username ? 'success' : 'info'" size="small">
-              {{ classInfo?.coach === row.username ? '教练' : '学生' }}
+            <el-tag type="info" size="small">
+              学生
             </el-tag>
           </template>
         </el-table-column>
