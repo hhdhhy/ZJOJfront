@@ -25,15 +25,6 @@ const fetchClassList = async () => {
       page: currentPage.value,
       page_size: pageSize.value
     })
-    // 调试:查看后端返回的数据结构
-    console.log('[ClassList] API返回的res对象:', res)
-    console.log('[ClassList] API返回的res.data:', res.data)
-    console.log('[ClassList] classList准备使用的数据:', res.data?.data || res.data?.results || res.data)
-    if (res.data?.data && res.data.data.length > 0) {
-      console.log('[ClassList] 第一条班级数据:', res.data.data[0])
-    } else if (res.data?.results && res.data.results.length > 0) {
-      console.log('[ClassList] 使用results字段,第一条数据:', res.data.results[0])
-    }
     // 后端返回格式: {code: 200, message: "...", data: [...]}
     classList.value = res.data?.data || res.data?.results || []
     total.value = classList.value.length
@@ -78,13 +69,13 @@ onMounted(() => {
       <el-table-column prop="name" label="班级名称" min-width="200" />
       <el-table-column label="教练" width="150">
         <template #default="{ row }">
-          {{ row.coach?.realname || row.coach?.username || '-' }}
+          {{ row.coach || '-' }}
         </template>
       </el-table-column>
       <el-table-column prop="member_count" label="成员数" width="100" />
-      <el-table-column prop="created_at" label="创建时间" width="180">
+      <el-table-column label="创建时间" width="180">
         <template #default="{ row }">
-          {{ new Date(row.created_at).toLocaleString('zh-CN') }}
+          {{ row.create_time ? new Date(row.create_time).toLocaleString('zh-CN') : '-' }}
         </template>
       </el-table-column>
       <el-table-column label="操作" width="120" fixed="right">

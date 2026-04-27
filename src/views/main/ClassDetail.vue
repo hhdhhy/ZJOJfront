@@ -20,9 +20,6 @@ const pageSize = ref(20)
 const fetchClassDetail = async () => {
   try {
     const res = await getClassDetail(props.classId)
-    // 调试:查看后端返回的数据结构
-    console.log('[ClassDetail] API返回的res对象:', res)
-    console.log('[ClassDetail] 班级详情数据:', res.data)
     classInfo.value = res.data
   } catch (err) {
     ElMessage.error('获取班级详情失败')
@@ -93,10 +90,10 @@ onMounted(() => {
         <el-descriptions-item label="班级名称">{{ classInfo.name }}</el-descriptions-item>
         <el-descriptions-item label="成员数">{{ classInfo.member_count }}</el-descriptions-item>
         <el-descriptions-item label="教练">
-          {{ classInfo.coach?.realname || classInfo.coach?.username || '-' }}
+          {{ classInfo.coach || '-' }}
         </el-descriptions-item>
         <el-descriptions-item label="创建时间">
-          {{ new Date(classInfo.created_at).toLocaleString('zh-CN') }}
+          {{ classInfo.create_time ? new Date(classInfo.create_time).toLocaleString('zh-CN') : '-' }}
         </el-descriptions-item>
         <el-descriptions-item label="描述" :span="2">
           {{ classInfo.description || '暂无描述' }}
