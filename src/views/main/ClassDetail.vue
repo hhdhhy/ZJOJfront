@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getClassDetail, getClassMembers, removeClassMember } from '@/api/modules/class'
+import { getClassDetail, getClassMembers, addClassMember, removeClassMember } from '@/api/modules/class'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 const props = defineProps({
@@ -16,11 +16,19 @@ const memberTotal = ref(0)
 const currentPage = ref(1)
 const pageSize = ref(20)
 
+// 添加成员对话框
+const addDialogVisible = ref(false)
+const addForm = ref({
+  username: ''
+})
+const adding = ref(false)
+
 // 获取班级详情
 const fetchClassDetail = async () => {
   try {
     const res = await getClassDetail(props.classId)
-    classInfo.value = res.data
+    console.log('[ClassDetail] 班级详情API返回:', res.data)
+    classInfo.value = res.data.data || res.data
   } catch (err) {
     ElMessage.error('获取班级详情失败')
     console.error('[ClassDetail] 请求失败:', err)
@@ -45,6 +53,34 @@ const fetchMembers = async () => {
   }
 }
 
+// 打开添加成员对话框
+const handleAddMember = () => {
+  addForm.value = { username: '' }
+  addDialogVisible.value = true
+}
+
+// 提交添加成员
+const submitAddMember = async () => {
+  if (!addForm.value.username.trim()) {
+    ElMessage.warning('请输入用户名')
+    return
+  }
+  
+  adding.value = true
+  try {
+    await addClassMember(props.classId, { username: addForm.value.username })
+    ElMessage.success('添加成员成功')
+    addDialogVisible.value = false
+    fetchMembers()
+    fetchClassDetail() // 刷新班级信息(成员数)
+  } catch (err) {
+    ElMessage.error(err.response?.data?.message || '添加成员失败')
+    console.error(err)
+  } finally {
+    adding.value = false
+  }
+}
+
 // 移除成员
 const handleRemoveMember = async (userId) => {
   try {
@@ -57,6 +93,7 @@ const handleRemoveMember = async (userId) => {
     await removeClassMember(props.classId, userId)
     ElMessage.success('移除成功')
     fetchMembers()
+    fetchClassDetail() // 刷新班级信息(成员数)
   } catch (err) {
     if (err !== 'cancel') {
       ElMessage.error('移除失败')
@@ -88,7 +125,7 @@ onMounted(() => {
     <el-card class="info-card" v-if="classInfo">
       <el-descriptions :column="2" border>
         <el-descriptions-item label="班级名称">{{ classInfo.name }}</el-descriptions-item>
-        <el-descriptions-item label="成员数">{{ classInfo.member_count }}</el-descriptions-item>
+        <el-descriptions-item label="成员数">{{ classInfo.member_count || 0 }}</el-descriptions-item>
         <el-descriptions-item label="教练">
           {{ classInfo.coach || '-' }}
         </el-descriptions-item>
@@ -103,7 +140,10 @@ onMounted(() => {
 
     <!-- 成员列表 -->
     <div class="members-section">
-      <h3>成员列表</h3>
+      <div class="members-header">
+        <h3>成员列表</h3>
+        <el-button type="primary" size="small" @click="handleAddMember">添加成员</el-button>
+      </div>
       <el-table 
         v-loading="loading" 
         :data="members" 
@@ -155,6 +195,27 @@ onMounted(() => {
         />
       </div>
     </div>
+
+    <!-- 添加成员对话框 -->
+    <el-dialog
+      v-model="addDialogVisible"
+      title="添加成员"
+      width="400px"
+    >
+      <el-form :model="addForm" label-width="80px">
+        <el-form-item label="用户名">
+          <el-input 
+            v-model="addForm.username" 
+            placeholder="请输入要添加的用户名"
+            @keyup.enter="submitAddMember"
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="addDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitAddMember" :loading="adding">确定</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -184,9 +245,16 @@ onMounted(() => {
 }
 
 .members-section h3 {
-  margin-bottom: 15px;
+  margin: 0;
   font-size: 18px;
   color: #303133;
+}
+
+.members-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
 }
 
 .pagination-container {
