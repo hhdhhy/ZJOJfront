@@ -94,7 +94,7 @@ onMounted(() => {
       <template v-else-if="report">
         <!-- 报告摘要 -->
         <el-card class="summary-card">
-          <h3>{{ report.report_type }}</h3>
+          <h3>{{ report.report_type === 'student' ? '个人报告' : report.report_type === 'class' ? '班级报告' : report.report_type }}</h3>
           <p class="period">{{ report.period }}</p>
           <p class="summary">{{ report.summary }}</p>
         </el-card>
