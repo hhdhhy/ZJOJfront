@@ -297,6 +297,8 @@ onMounted(() => {
 
 .solution-card {
   margin-bottom: 15px;
+  max-height: 500px;
+  overflow-y: auto;
 }
 
 .solution-card h4 {
