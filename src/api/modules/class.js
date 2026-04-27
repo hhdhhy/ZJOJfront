@@ -30,6 +30,6 @@ export const addClassMember = (classId, data) => {
 };
 
 // 移除班级成员
-export const removeClassMember = (classId, userId) => {
-  return authHttp.delete(`/api/classes/${classId}/members/${userId}/`);
+export const removeClassMember = (classId, username) => {
+  return authHttp.delete(`/api/classes/${classId}/members/?username=${username}`);
 };

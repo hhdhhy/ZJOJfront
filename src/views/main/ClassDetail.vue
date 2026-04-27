@@ -84,7 +84,7 @@ const submitAddMember = async () => {
 }
 
 // 移除成员
-const handleRemoveMember = async (userId) => {
+const handleRemoveMember = async (username) => {
   try {
     await ElMessageBox.confirm('确定要移除该成员吗?', '提示', {
       confirmButtonText: '确定',
@@ -92,13 +92,13 @@ const handleRemoveMember = async (userId) => {
       type: 'warning'
     })
     
-    await removeClassMember(props.classId, userId)
+    await removeClassMember(props.classId, username)
     ElMessage.success('移除成功')
     fetchMembers()
     fetchClassDetail() // 刷新班级信息(成员数)
   } catch (err) {
     if (err !== 'cancel') {
-      ElMessage.error('移除失败')
+      ElMessage.error(err.response?.data?.message || '移除失败')
       console.error(err)
     }
   }
@@ -164,8 +164,8 @@ onMounted(() => {
         </el-table-column>
         <el-table-column label="角色" width="100">
           <template #default="{ row }">
-            <el-tag type="info" size="small">
-              学生
+            <el-tag :type="classInfo?.coach === row.username ? 'success' : 'info'" size="small">
+              {{ classInfo?.coach === row.username ? '教练' : '学生' }}
             </el-tag>
           </template>
         </el-table-column>
@@ -179,7 +179,7 @@ onMounted(() => {
             <el-button 
               type="danger" 
               size="small"
-              @click="handleRemoveMember(row.uid)"
+              @click="handleRemoveMember(row.username)"
             >
               移除
             </el-button>
