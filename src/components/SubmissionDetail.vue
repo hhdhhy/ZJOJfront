@@ -112,7 +112,7 @@
             :shadow="'hover'"
           >
             <h4>{{ solution.title }}</h4>
-            <div class="solution-text" v-html="solution.content"></div>
+            <div class="solution-text markdown-body" v-html="renderMarkdown(solution.content)"></div>
             <div class="solution-meta">
               <el-tag v-if="solution.similarity !== undefined && solution.similarity !== null" size="small">相似度: {{ (solution.similarity * 100).toFixed(0) }}%</el-tag>
             </div>
@@ -141,6 +141,7 @@ import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useSubmissionStore } from '@/stores/submission'
 import { getErrorSolution } from '@/api/modules/ai'
+import { marked } from 'marked'
 
 const props = defineProps({
   submissionId: {
@@ -183,6 +184,12 @@ const goToProblem = () => {
   if (submissionData.value.problem?.problem_id) {
     emit('view-problem', submissionData.value.problem.problem_id)
   }
+}
+
+// 渲染Markdown
+const renderMarkdown = (content) => {
+  if (!content) return ''
+  return marked.parse(content)
 }
 
 // 获取错误解决方案
@@ -293,6 +300,71 @@ onMounted(() => {
   line-height: 1.6;
   color: #606266;
   margin-bottom: 10px;
+}
+
+/* Markdown样式 */
+.solution-text.markdown-body {
+  font-size: 14px;
+}
+
+.solution-text.markdown-body h1,
+.solution-text.markdown-body h2,
+.solution-text.markdown-body h3,
+.solution-text.markdown-body h4,
+.solution-text.markdown-body h5,
+.solution-text.markdown-body h6 {
+  margin-top: 16px;
+  margin-bottom: 10px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.solution-text.markdown-body p {
+  margin-bottom: 10px;
+}
+
+.solution-text.markdown-body code {
+  background-color: #f6f8fa;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-size: 85%;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+.solution-text.markdown-body pre {
+  background-color: #f6f8fa;
+  padding: 16px;
+  border-radius: 6px;
+  overflow: auto;
+  margin-bottom: 10px;
+}
+
+.solution-text.markdown-body pre code {
+  background-color: transparent;
+  padding: 0;
+  font-size: 100%;
+}
+
+.solution-text.markdown-body ul,
+.solution-text.markdown-body ol {
+  padding-left: 2em;
+  margin-bottom: 10px;
+}
+
+.solution-text.markdown-body li {
+  margin-bottom: 5px;
+}
+
+.solution-text.markdown-body strong {
+  font-weight: 600;
+  color: #303133;
+}
+
+.solution-text.markdown-body blockquote {
+  border-left: 4px solid #dfe2e5;
+  padding-left: 16px;
+  margin: 10px 0;
+  color: #6a737d;
 }
 
 .solution-meta {
