@@ -17,7 +17,7 @@ const classList = ref([])
 const fetchClassList = async () => {
   try {
     const res = await getClassList({ page_size: 100 })
-    classList.value = res.data.results || []
+    classList.value = res.data?.data || res.data?.results || []
   } catch (err) {
     console.error('获取班级列表失败', err)
   }
