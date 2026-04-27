@@ -113,9 +113,6 @@
           >
             <h4>{{ solution.title }}</h4>
             <div class="solution-text markdown-body" v-html="renderMarkdown(solution.content)"></div>
-            <div class="solution-meta">
-              <el-tag v-if="solution.relevance_score !== undefined && solution.relevance_score !== null" size="small">相似度: {{ (solution.relevance_score * 100).toFixed(0) }}%</el-tag>
-            </div>
           </el-card>
         </div>
         <el-empty v-else-if="showSolutions" description="未找到相关解决方案" />
@@ -300,7 +297,7 @@ onMounted(() => {
 }
 
 .solution-card :deep(.el-card__body) {
-  max-height: 500px;
+  max-height: 600px;
   overflow-y: auto;
 }
 
