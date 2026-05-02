@@ -22,7 +22,7 @@ let form_register = reactive({
 
 const onSubmit = async () => {
   let usernameRex = /^[0-9a-zA-Z_-]{2,20}$/
-  let pwdRgx = /^[0-9a-zA-Z_-]{6,20}$/
+  let pwdRgx = /^[^\s]{6,20}$/
   let emailRex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   
   if (!usernameRex.test(form_register.username)) {
@@ -30,7 +30,7 @@ const onSubmit = async () => {
     return
   }
   if (!pwdRgx.test(form_register.password)) {
-    ElMessage.warning("密码格式错误：6-20位字母、数字、下划线或横线")
+    ElMessage.warning("密码格式错误：6-20位字符，不含空格")
     return
   }
   if (form_register.password !== form_register.confirmPassword) {

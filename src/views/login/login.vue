@@ -18,14 +18,14 @@ let form_login = reactive({
 
 const onSubmit = async () => {
   let usernameRex = /^[0-9a-zA-Z_-]{2,20}$/
-  let pwdRgx = /^[0-9a-zA-Z_-]{6,20}$/
+  let pwdRgx = /^[^\s]{6,20}$/
   
   if (!usernameRex.test(form_login.username)) {
     ElMessage.warning("用户名格式错误")
     return
   }
   if (!pwdRgx.test(form_login.password)) {
-    ElMessage.warning("密码格式错误")
+    ElMessage.warning("密码格式错误：6-20位字符，不含空格")
     return
   }
   
