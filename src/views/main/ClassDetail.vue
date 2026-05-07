@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { getClassDetail, getClassMembers, addClassMember, removeClassMember } from '@/api/modules/class'
+import { getStudentReport } from '@/api/modules/ai'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 const props = defineProps({
@@ -110,6 +111,32 @@ const handlePageChange = (page) => {
   fetchMembers()
 }
 
+// 学生报告对话框
+const reportDialogVisible = ref(false)
+const reportLoading = ref(false)
+const studentReport = ref(null)
+const currentStudentName = ref('')
+
+const handleViewStudentReport = async (row) => {
+  const studentId = row.uid || row.id
+  if (!studentId) {
+    ElMessage.warning('无法获取该学生的ID')
+    return
+  }
+  currentStudentName.value = row.username || row.realname || '未知'
+  reportDialogVisible.value = true
+  reportLoading.value = true
+  studentReport.value = null
+  try {
+    const res = await getStudentReport({ student_id: studentId, days: 7 })
+    studentReport.value = res.data
+  } catch (err) {
+    ElMessage.error('获取学生报告失败')
+  } finally {
+    reportLoading.value = false
+  }
+}
+
 onMounted(() => {
   fetchClassDetail()
   fetchMembers()
@@ -214,8 +241,8 @@ onMounted(() => {
     >
       <el-form :model="addForm" label-width="80px">
         <el-form-item label="用户名">
-          <el-input 
-            v-model="addForm.username" 
+          <el-input
+            v-model="addForm.username"
             placeholder="请输入要添加的用户名"
             @keyup.enter="submitAddMember"
           />
@@ -225,6 +252,57 @@ onMounted(() => {
         <el-button @click="addDialogVisible = false">取消</el-button>
         <el-button type="primary" @click="submitAddMember" :loading="adding">确定</el-button>
       </template>
+    </el-dialog>
+
+    <!-- 学生报告对话框 -->
+    <el-dialog
+      v-model="reportDialogVisible"
+      :title="currentStudentName + ' - 学情报告'"
+      width="700px"
+    >
+      <div v-loading="reportLoading" style="min-height: 200px">
+        <el-empty v-if="!reportLoading && !studentReport" description="暂无报告数据" />
+        <template v-else-if="studentReport">
+          <el-card class="summary-card" style="margin-bottom: 16px">
+            <div class="summary-text">{{ studentReport.summary }}</div>
+            <div style="color: #909399; font-size: 12px; margin-top: 8px">
+              {{ studentReport.period }}
+            </div>
+          </el-card>
+          <el-row :gutter="16" v-if="studentReport.statistics">
+            <el-col :span="6">
+              <el-card class="stat-card">
+                <div class="stat-value">{{ studentReport.statistics.total_submissions }}</div>
+                <div class="stat-label">总提交数</div>
+              </el-card>
+            </el-col>
+            <el-col :span="6">
+              <el-card class="stat-card">
+                <div class="stat-value">{{ studentReport.statistics.ac_count || 0 }}</div>
+                <div class="stat-label">通过数</div>
+              </el-card>
+            </el-col>
+            <el-col :span="6">
+              <el-card class="stat-card">
+                <div class="stat-value">{{ studentReport.statistics.ac_rate || 0 }}%</div>
+                <div class="stat-label">通过率</div>
+              </el-card>
+            </el-col>
+            <el-col :span="6">
+              <el-card class="stat-card">
+                <div class="stat-value">{{ studentReport.statistics.total_submissions - studentReport.statistics.unsolved_count || 0 }}</div>
+                <div class="stat-label">解决题目数</div>
+              </el-card>
+            </el-col>
+          </el-row>
+          <el-card v-if="studentReport.recommendations && studentReport.recommendations.length" style="margin-top: 16px">
+            <h4 style="margin: 0 0 10px 0">学习建议</h4>
+            <ul style="margin: 0; padding-left: 20px">
+              <li v-for="(item, idx) in studentReport.recommendations" :key="idx" style="margin-bottom: 6px; color: #606266">{{ item }}</li>
+            </ul>
+          </el-card>
+        </template>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -271,5 +349,28 @@ onMounted(() => {
   margin-top: 20px;
   display: flex;
   justify-content: flex-end;
+}
+
+.stat-card {
+  text-align: center;
+  padding: 12px;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: bold;
+  color: #409EFF;
+  margin-bottom: 6px;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: #909399;
+}
+
+.summary-text {
+  color: #606266;
+  line-height: 1.8;
+  white-space: pre-line;
 }
 </style>
