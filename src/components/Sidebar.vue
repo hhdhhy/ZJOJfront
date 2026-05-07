@@ -53,7 +53,7 @@
             <template #title>知识库</template>
           </el-menu-item>
 
-          <el-menu-item v-if="!isCoachOrAdmin" index="report">
+          <el-menu-item index="report">
             <el-icon>
               <Document />
             </el-icon>
