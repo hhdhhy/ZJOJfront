@@ -47,12 +47,15 @@ const fetchReport = async () => {
   }
 }
 
-onMounted(() => {
-  // 学生只能看个人报告
-  if (authStore.user?.role < 2) {
-    reportType.value = 'student'
+onMounted(async () => {
+  if (authStore.user?.role >= 2) {
+    reportType.value = 'class'
   }
-  fetchClassList()
+  await fetchClassList()
+  // 教练自动选择第一个班级
+  if (reportType.value === 'class' && classList.value.length > 0) {
+    classId.value = classList.value[0].id
+  }
   fetchReport()
 })
 </script>
@@ -62,10 +65,6 @@ onMounted(() => {
     <div class="page-header">
       <h2>学情分析报告</h2>
       <div class="header-controls">
-        <el-select v-if="authStore.user?.role >= 2" v-model="reportType" @change="fetchReport" style="width: 150px; margin-right: 10px">
-          <el-option label="个人报告" value="student" />
-          <el-option label="班级报告" value="class" />
-        </el-select>
         <el-select 
           v-if="reportType === 'class'" 
           v-model="classId" 
@@ -96,7 +95,7 @@ onMounted(() => {
         <el-card class="summary-card">
           <h3>{{ report.report_type === 'student' ? '个人报告' : report.report_type === 'class' ? '班级报告' : report.report_type }}</h3>
           <p class="period">{{ report.period }}</p>
-          <p class="summary">{{ report.summary }}</p>
+          <div class="summary-text">{{ report.summary }}</div>
         </el-card>
 
         <!-- 统计数据 -->
@@ -197,10 +196,11 @@ onMounted(() => {
   margin: 5px 0;
 }
 
-.summary {
+.summary-text {
   color: #606266;
-  line-height: 1.6;
+  line-height: 1.8;
   margin: 10px 0 0 0;
+  white-space: pre-line;
 }
 
 .stats-row {

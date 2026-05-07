@@ -80,7 +80,7 @@
       
       <!-- 提交代码区域 -->
       <div class="submit-section">
-        <h3>💻 提交代码</h3>
+        <h3>提交代码</h3>
         <el-form 
           ref="submitFormRef"
           :model="submitForm"
@@ -298,12 +298,11 @@ const submitCode = async () => {
           language: submitForm.value.language,
           code: submitForm.value.code
         })
-        
-        if (res.data.message === '代码提交成功') {
+
+        // HTTP 201 即提交成功，不再依赖具体message文本
+        if (res.status === 201 && res.data.submission_id) {
           ElMessage.success('代码提交成功！正在跳转到评测状态页面...')
           resetSubmitForm()
-          // 通知父组件跳转到评测状态页面
-          console.log('[ProblemDetail] 发送submit-success事件')
           emit('submit-success')
         } else {
           ElMessage.error(res.data.message || '提交失败')

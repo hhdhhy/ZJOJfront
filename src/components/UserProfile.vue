@@ -72,14 +72,14 @@
     <div class="last-login-info" v-if="!loading">
       <el-divider />
       <el-text type="info" size="small">
-        📅 最后登录时间: {{ formatDate(profileForm.last_login) }}
+        最后登录时间: {{ formatDate(profileForm.last_login) }}
       </el-text>
     </div>
     
     <!-- 密码修改区域 -->
     <el-divider />
     <div class="password-section">
-      <h3>🔒 修改密码</h3>
+      <h3>修改密码</h3>
       <el-form 
         ref="passwordFormRef"
         :model="passwordForm"

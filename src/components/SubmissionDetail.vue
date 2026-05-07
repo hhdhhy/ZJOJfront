@@ -104,7 +104,7 @@
         </el-button>
         
         <div v-if="showSolutions && errorSolutions.length > 0" class="solutions-content">
-          <h3>💡 错误解决方案</h3>
+          <h3>错误解决方案</h3>
           <el-card 
             v-for="(solution, index) in errorSolutions" 
             :key="index" 
@@ -120,7 +120,7 @@
       
       <!-- 代码展示 -->
       <div class="code-section">
-        <h3>💻 源代码</h3>
+        <h3>源代码</h3>
         <el-input
           v-model="submissionData.code"
           type="textarea"

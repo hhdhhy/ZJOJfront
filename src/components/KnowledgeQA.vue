@@ -112,7 +112,7 @@
         <el-card class="tips-card" style="margin-top: 20px;" :shadow="'never'">
           <template #header>
             <div class="card-header">
-              <span class="card-title">💡 使用提示</span>
+              <span class="card-title">使用提示</span>
             </div>
           </template>
           

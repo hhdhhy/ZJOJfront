@@ -52,9 +52,10 @@ const onSubmit = async () => {
     const res = await authHttp.post('/api/register/', {
       username: form_register.username,
       password: form_register.password,
+      password_confirm: form_register.confirmPassword,
       email: form_register.email,
       realname: form_register.realname,
-      telephone: form_register.telephone || null
+      telephone: form_register.telephone || ''
     })
     let data = res.data
     
