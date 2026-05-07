@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { getClassDetail, getClassMembers, addClassMember, removeClassMember } from '@/api/modules/class'
 import { getStudentReport } from '@/api/modules/ai'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { marked } from 'marked'
 
 const props = defineProps({
   classId: Number
@@ -116,6 +117,11 @@ const reportDialogVisible = ref(false)
 const reportLoading = ref(false)
 const studentReport = ref(null)
 const currentStudentName = ref('')
+
+const renderMarkdown = (content) => {
+  if (!content) return ''
+  return marked.parse(content)
+}
 
 const handleViewStudentReport = async (row) => {
   const studentId = row.uid || row.id
@@ -264,7 +270,7 @@ onMounted(() => {
         <el-empty v-if="!reportLoading && !studentReport" description="暂无报告数据" />
         <template v-else-if="studentReport">
           <el-card class="summary-card" style="margin-bottom: 16px">
-            <div class="summary-text">{{ studentReport.summary }}</div>
+            <div class="summary-text" v-html="renderMarkdown(studentReport.summary)"></div>
             <div style="color: #909399; font-size: 12px; margin-top: 8px">
               {{ studentReport.period }}
             </div>
