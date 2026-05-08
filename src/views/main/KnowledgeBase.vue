@@ -253,11 +253,11 @@ onMounted(() => {
           {{ new Date(row.created_at).toLocaleString('zh-CN') }}
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="240" fixed="right" v-if="isCoachOrAdmin">
+      <el-table-column label="操作" width="240" fixed="right">
         <template #default="{ row }">
           <el-button type="primary" size="small" @click="handleView(row)">查看</el-button>
-          <el-button type="success" size="small" @click="handleEditOpen(row)">编辑</el-button>
-          <el-button type="danger" size="small" @click="handleDelete(row.id)">删除</el-button>
+          <el-button v-if="isCoachOrAdmin" type="success" size="small" @click="handleEditOpen(row)">编辑</el-button>
+          <el-button v-if="isCoachOrAdmin" type="danger" size="small" @click="handleDelete(row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
