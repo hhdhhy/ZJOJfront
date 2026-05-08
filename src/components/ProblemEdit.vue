@@ -226,7 +226,7 @@ const handleUpdateProblem = async () => {
           description: editForm.value.description,
           time_limit: editForm.value.time_limit,
           memory_limit: editForm.value.memory_limit,
-          tags: editForm.value.tags
+          tag_ids: editForm.value.tags
         })
         
         if (res.data.message === '题目更新成功') {

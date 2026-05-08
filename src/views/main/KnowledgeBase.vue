@@ -1,8 +1,9 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import { getKnowledgeList, createKnowledge, deleteKnowledge } from '@/api/modules/ai'
+import { getKnowledgeList, createKnowledge, updateKnowledge, deleteKnowledge } from '@/api/modules/ai'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
+import { renderMarkdown } from '@/utils/markdown'
 
 const authStore = useAuthStore()
 
@@ -17,8 +18,21 @@ const total = ref(0)
 const currentPage = ref(1)
 const pageSize = ref(20)
 const showCreateDialog = ref(false)
-const submitting = ref(false)  // 防止重复提交
-const deleting = ref(false)  // 防止重复删除
+const showViewDialog = ref(false)
+const showEditDialog = ref(false)
+const viewingDoc = ref(null)
+const submitting = ref(false)
+const deleting = ref(false)
+
+const editForm = ref({
+  id: null,
+  title: '',
+  content: '',
+  doc_type: 'algorithm',
+  tag_names: [],
+  error_type: ''
+})
+const saving = ref(false)
 
 // 表单数据
 const form = ref({
@@ -46,6 +60,8 @@ const errorTypeOptions = [
   { label: 'RE (运行错误)', value: 'RE' },
   { label: 'CE (编译错误)', value: 'CE' }
 ]
+
+const docTypeLabelMap = Object.fromEntries(docTypeOptions.map(o => [o.value, o.label]))
 
 // 获取知识库列表
 const fetchKnowledgeList = async () => {
@@ -144,6 +160,47 @@ const handleDelete = async (id) => {
   }
 }
 
+// 查看文档
+const handleView = (row) => {
+  viewingDoc.value = row
+  showViewDialog.value = true
+}
+
+// 打开编辑对话框
+const handleEditOpen = (row) => {
+  editForm.value = {
+    id: row.id,
+    title: row.title,
+    content: row.content,
+    doc_type: row.doc_type,
+    tag_names: row.tags ? row.tags.map(t => t.name) : [],
+    error_type: row.error_type || ''
+  }
+  showEditDialog.value = true
+}
+
+// 保存编辑
+const handleEditSave = async () => {
+  if (saving.value) return
+  if (!editForm.value.title || !editForm.value.content) {
+    ElMessage.warning('请填写标题和内容')
+    return
+  }
+  saving.value = true
+  try {
+    await updateKnowledge(editForm.value.id, editForm.value)
+    ElMessage.success('保存成功')
+    showEditDialog.value = false
+    fetchKnowledgeList()
+  } catch (err) {
+    let msg = '保存失败'
+    if (err.response?.data?.message) msg = err.response.data.message
+    ElMessage.error(msg)
+  } finally {
+    saving.value = false
+  }
+}
+
 // 重置表单
 const resetForm = () => {
   form.value = {
@@ -183,7 +240,7 @@ onMounted(() => {
       <el-table-column prop="title" label="标题" min-width="200" />
       <el-table-column prop="doc_type" label="类型" width="120">
         <template #default="{ row }">
-          <el-tag size="small">{{ row.doc_type }}</el-tag>
+          <el-tag size="small">{{ docTypeLabelMap[row.doc_type] || row.doc_type }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="error_type" label="错误类型" width="100">
@@ -196,17 +253,11 @@ onMounted(() => {
           {{ new Date(row.created_at).toLocaleString('zh-CN') }}
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="150" fixed="right" v-if="isCoachOrAdmin">
+      <el-table-column label="操作" width="240" fixed="right" v-if="isCoachOrAdmin">
         <template #default="{ row }">
-          <el-button 
-            type="danger" 
-            size="small"
-            :loading="deleting"
-            :disabled="deleting"
-            @click="handleDelete(row.id)"
-          >
-            删除
-          </el-button>
+          <el-button type="primary" size="small" @click="handleView(row)">查看</el-button>
+          <el-button type="success" size="small" @click="handleEditOpen(row)">编辑</el-button>
+          <el-button type="danger" size="small" @click="handleDelete(row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -222,41 +273,22 @@ onMounted(() => {
     </div>
 
     <!-- 创建对话框 -->
-    <el-dialog
-      v-model="showCreateDialog"
-      title="新建知识库文档"
-      width="600px"
-    >
+    <el-dialog v-model="showCreateDialog" title="新建知识库文档" width="600px">
       <el-form :model="form" label-width="100px">
         <el-form-item label="标题" required>
           <el-input v-model="form.title" placeholder="请输入标题" />
         </el-form-item>
         <el-form-item label="内容" required>
-          <el-input
-            v-model="form.content"
-            type="textarea"
-            :rows="6"
-            placeholder="请输入内容（支持Markdown）"
-          />
+          <el-input v-model="form.content" type="textarea" :rows="6" placeholder="请输入内容（支持Markdown）" />
         </el-form-item>
         <el-form-item label="文档类型" required>
           <el-select v-model="form.doc_type" placeholder="请选择类型">
-            <el-option
-              v-for="item in docTypeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
+            <el-option v-for="item in docTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
         <el-form-item label="错误类型" v-if="form.doc_type === 'error_solution'">
           <el-select v-model="form.error_type" placeholder="请选择错误类型">
-            <el-option
-              v-for="item in errorTypeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
+            <el-option v-for="item in errorTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
         <el-form-item label="标签">
@@ -266,6 +298,51 @@ onMounted(() => {
       <template #footer>
         <el-button @click="showCreateDialog = false" :disabled="submitting">取消</el-button>
         <el-button type="primary" @click="handleCreate" :loading="submitting">确定</el-button>
+      </template>
+    </el-dialog>
+
+    <!-- 查看对话框 -->
+    <el-dialog v-model="showViewDialog" :title="viewingDoc?.title || '文档详情'" width="700px">
+      <div v-if="viewingDoc" class="view-doc-body">
+        <div class="view-doc-meta">
+          <el-tag size="small">{{ viewingDoc.doc_type }}</el-tag>
+          <span v-if="viewingDoc.error_type" style="margin-left:8px">
+            <el-tag size="small" type="danger">{{ viewingDoc.error_type }}</el-tag>
+          </span>
+          <span style="margin-left:12px;color:#909399;font-size:12px">
+            {{ new Date(viewingDoc.created_at).toLocaleString('zh-CN') }}
+          </span>
+        </div>
+        <div class="markdown-content" v-html="renderMarkdown(viewingDoc.content)"></div>
+      </div>
+      <template #footer>
+        <el-button @click="showViewDialog = false">关闭</el-button>
+      </template>
+    </el-dialog>
+
+    <!-- 编辑对话框 -->
+    <el-dialog v-model="showEditDialog" title="编辑知识库文档" width="600px">
+      <el-form :model="editForm" label-width="100px">
+        <el-form-item label="标题" required>
+          <el-input v-model="editForm.title" placeholder="请输入标题" />
+        </el-form-item>
+        <el-form-item label="内容" required>
+          <el-input v-model="editForm.content" type="textarea" :rows="10" placeholder="支持Markdown格式" />
+        </el-form-item>
+        <el-form-item label="文档类型" required>
+          <el-select v-model="editForm.doc_type" placeholder="请选择类型">
+            <el-option v-for="item in docTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="错误类型" v-if="editForm.doc_type === 'error_solution'">
+          <el-select v-model="editForm.error_type" placeholder="请选择错误类型">
+            <el-option v-for="item in errorTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="showEditDialog = false">取消</el-button>
+        <el-button type="primary" @click="handleEditSave" :loading="saving">保存</el-button>
       </template>
     </el-dialog>
   </div>
@@ -296,5 +373,49 @@ onMounted(() => {
   margin-top: 20px;
   display: flex;
   justify-content: flex-end;
+}
+
+.view-doc-body {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.view-doc-meta {
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.markdown-content {
+  color: #303133;
+  line-height: 1.8;
+  font-size: 14px;
+}
+
+.markdown-content :deep(h1),
+.markdown-content :deep(h2),
+.markdown-content :deep(h3) {
+  color: #303133;
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+
+.markdown-content :deep(pre) {
+  background: #f5f7fa;
+  padding: 12px 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+}
+
+.markdown-content :deep(code) {
+  background: #f5f7fa;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 13px;
+}
+
+.markdown-content :deep(pre code) {
+  background: none;
+  padding: 0;
 }
 </style>

@@ -1,9 +1,16 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { getClassDetail, getClassMembers, addClassMember, removeClassMember } from '@/api/modules/class'
 import { getStudentReport } from '@/api/modules/ai'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { marked } from 'marked'
+import { renderMarkdown } from '@/utils/markdown'
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
+
+const isCoachOrAdmin = computed(() => {
+  return authStore.user?.role >= 2
+})
 
 const props = defineProps({
   classId: Number
@@ -118,11 +125,6 @@ const reportLoading = ref(false)
 const studentReport = ref(null)
 const currentStudentName = ref('')
 
-const renderMarkdown = (content) => {
-  if (!content) return ''
-  return marked.parse(content)
-}
-
 const handleViewStudentReport = async (row) => {
   const studentId = row.uid || row.id
   if (!studentId) {
@@ -177,7 +179,7 @@ onMounted(() => {
     <div class="members-section">
       <div class="members-header">
         <h3>成员列表</h3>
-        <el-button type="primary" size="small" @click="handleAddMember">添加成员</el-button>
+        <el-button v-if="isCoachOrAdmin" type="primary" size="small" @click="handleAddMember">添加成员</el-button>
       </div>
       <el-table 
         v-loading="loading" 
@@ -207,18 +209,18 @@ onMounted(() => {
             {{ row.join_time ? new Date(row.join_time).toLocaleString('zh-CN') : '-' }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="200" fixed="right">
+        <el-table-column v-if="isCoachOrAdmin" label="操作" width="200" fixed="right">
           <template #default="{ row }">
-            <el-button 
-              type="primary" 
+            <el-button
+              type="primary"
               size="small"
               @click="handleViewStudentReport(row)"
               style="margin-right: 8px"
             >
               查看报告
             </el-button>
-            <el-button 
-              type="danger" 
+            <el-button
+              type="danger"
               size="small"
               @click="handleRemoveMember(row.username)"
             >

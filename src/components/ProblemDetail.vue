@@ -142,7 +142,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { marked } from 'marked'
+import { renderMarkdown } from '@/utils/markdown'
 import { getProblemDetail, deleteProblem, submitCode as apiSubmitCode } from '@/api'
 import { useAuthStore } from '@/stores/auth'
 
@@ -198,12 +198,6 @@ const fetchProblemDetail = async () => {
   } finally {
     loading.value = false
   }
-}
-
-// 渲染 Markdown
-const renderMarkdown = (content) => {
-  if (!content) return ''
-  return marked.parse(content)
 }
 
 // 格式化日期

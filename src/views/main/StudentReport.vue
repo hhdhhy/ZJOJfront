@@ -4,7 +4,7 @@ import { getStudentReport, getClassReport } from '@/api/modules/ai'
 import { getClassList } from '@/api/modules/class'
 import { ElMessage } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
-import { marked } from 'marked'
+import { renderMarkdown } from '@/utils/markdown'
 
 const authStore = useAuthStore()
 const loading = ref(false)
@@ -22,11 +22,6 @@ const fetchClassList = async () => {
   } catch (err) {
     console.error('获取班级列表失败', err)
   }
-}
-
-const renderMarkdown = (content) => {
-  if (!content) return ''
-  return marked.parse(content)
 }
 
 // 获取学情报告

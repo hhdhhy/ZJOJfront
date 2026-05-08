@@ -186,9 +186,9 @@ const submitCreate = async () => {
           description: createForm.value.description,
           time_limit: createForm.value.time_limit,
           memory_limit: createForm.value.memory_limit,
-          tags: createForm.value.tags
+          tag_ids: createForm.value.tags
         })
-        
+
         if (res.data.message === '题目创建成功') {
           ElMessage.success('题目创建成功！')
           // 询问用户是否要上传测试用例

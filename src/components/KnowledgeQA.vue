@@ -30,6 +30,14 @@
               </div>
               <div class="message-content">
                 <div class="message-text" v-html="renderMarkdown(msg.content)"></div>
+                <div v-if="msg.role === 'ai' && msg.sources && msg.sources.length > 0" class="message-sources">
+                  <div class="sources-title">引用来源</div>
+                  <div v-for="(src, idx) in msg.sources" :key="idx" class="source-item">
+                    <span class="source-title">{{ src.title }}</span>
+                    <el-tag size="small" type="info">{{ docTypeLabelMap[src.type] || src.type }}</el-tag>
+                    <span class="source-similarity">{{ (src.similarity * 100).toFixed(0) }}% 匹配</span>
+                  </div>
+                </div>
                 <div class="message-time">{{ formatTime(msg.time) }}</div>
               </div>
             </div>
@@ -143,6 +151,14 @@ const useRag = ref(true)
 const usageStats = ref(null)
 const messagesContainer = ref(null)
 const waitingForAnswer = ref(false) // 是否正在等待AI回答
+
+const docTypeLabelMap = {
+  algorithm: '算法教程',
+  solution: '解题方案',
+  template: '代码模板',
+  concept: '概念说明',
+  error_solution: '错误解决方案'
+}
 
 // 渲染Markdown
 const renderMarkdown = (content) => {
@@ -406,16 +422,45 @@ onMounted(() => {
 }
 
 .message-sources {
-  margin-top: 10px;
-  padding: 8px;
+  margin-top: 8px;
+  padding: 8px 12px;
   background-color: #f5f7fa;
   border-radius: 4px;
+  border-left: 3px solid #409eff;
 }
 
 .sources-title {
   font-size: 12px;
   color: #606266;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.source-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 12px;
+  color: #606266;
+}
+
+.source-item + .source-item {
+  border-top: 1px solid #e4e7ed;
+}
+
+.source-title {
+  flex: 1;
+  color: #303133;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.source-similarity {
+  color: #909399;
+  flex-shrink: 0;
 }
 
 .chat-input {

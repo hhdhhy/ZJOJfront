@@ -138,7 +138,7 @@ import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useSubmissionStore } from '@/stores/submission'
 import { getErrorSolution } from '@/api/modules/ai'
-import { marked } from 'marked'
+import { renderMarkdown } from '@/utils/markdown'
 
 const props = defineProps({
   submissionId: {
@@ -185,10 +185,6 @@ const goToProblem = () => {
 }
 
 // 渲染Markdown
-const renderMarkdown = (content) => {
-  if (!content) return ''
-  return marked.parse(content)
-}
 
 // 获取错误解决方案
 const fetchErrorSolutions = async () => {
