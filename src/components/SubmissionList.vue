@@ -123,7 +123,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useSubmissionStore } from '@/stores/submission'
 import { getProblemList } from '@/api'
@@ -138,12 +138,12 @@ const loading = computed(() => submissionStore.loading)
 const filterProblemId = ref('')
 const filterResult = ref('')
 const problemOptions = ref([])
+let pollTimer = null
 
 // 获取题目列表(用于筛选)
 const fetchProblemOptions = async () => {
   try {
     const res = await getProblemList()
-    // 后端可能返回分页格式 {count, next, previous, results} 或直接数组
     problemOptions.value = res.data.results || res.data || []
   } catch (error) {
     console.error('获取题目列表失败:', error)
@@ -160,12 +160,39 @@ const fetchSubmissions = async () => {
     if (filterResult.value) {
       params.result = filterResult.value
     }
-    
+
     await submissionStore.fetchSubmissions(params)
-    // 不需要手动赋值,store会自动更新submissions
+    // 如果有未完成的提交，启动自动刷新
+    const hasPending = submissionStore.submissions.some(s => s.status < 2)
+    if (hasPending) {
+      startPolling()
+    } else {
+      stopPolling()
+    }
   } catch (error) {
     ElMessage.error('获取提交列表失败')
     console.error(error)
+  }
+}
+
+const startPolling = () => {
+  if (pollTimer) return
+  pollTimer = setInterval(async () => {
+    try {
+      const params = {}
+      if (filterProblemId.value) params.problem_id = filterProblemId.value
+      if (filterResult.value) params.result = filterResult.value
+      await submissionStore.fetchSubmissions(params)
+      const hasPending = submissionStore.submissions.some(s => s.status < 2)
+      if (!hasPending) stopPolling()
+    } catch { /* 静默忽略 */ }
+  }, 2000)
+}
+
+const stopPolling = () => {
+  if (pollTimer) {
+    clearInterval(pollTimer)
+    pollTimer = null
   }
 }
 
@@ -227,6 +254,10 @@ const getResultType = (result) => {
 onMounted(() => {
   fetchProblemOptions()
   fetchSubmissions()
+})
+
+onBeforeUnmount(() => {
+  stopPolling()
 })
 </script>
 

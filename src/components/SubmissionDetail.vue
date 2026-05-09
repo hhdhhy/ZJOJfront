@@ -4,13 +4,16 @@
       <div class="card-header">
         <div class="submission-title">
           <span class="submission-id">提交 #{{ submissionData.id }}</span>
-          <el-tag 
-            :type="getResultType(submissionData.result)" 
+          <el-tag
+            :type="getResultType(submissionData.result)"
             size="large"
             style="margin-left: 15px;"
           >
             {{ submissionData.result_display || submissionData.result }}
           </el-tag>
+          <span v-if="submissionData.status < 2" class="judging-hint">
+            <el-tag type="warning" size="small">评测中...结果将自动刷新</el-tag>
+          </span>
           <span v-if="submissionData.score !== undefined" style="margin-left: 10px;">
             得分: {{ submissionData.score }}
           </span>
@@ -134,7 +137,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useSubmissionStore } from '@/stores/submission'
 import { getErrorSolution } from '@/api/modules/ai'
@@ -157,6 +160,7 @@ const submissionData = ref({})
 const errorSolutions = ref([])
 const showSolutions = ref(false)
 const solutionLoading = ref(false)
+let pollTimer = null
 
 // 获取提交详情
 const fetchSubmissionDetail = async () => {
@@ -164,11 +168,40 @@ const fetchSubmissionDetail = async () => {
   try {
     const data = await submissionStore.fetchSubmissionDetail(props.submissionId)
     submissionData.value = data
+
+    // 如果还在评测中，启动轮询
+    if (data.status < 2) {
+      startPolling()
+    } else {
+      stopPolling()
+    }
   } catch (error) {
     ElMessage.error('获取提交详情失败')
     console.error(error)
   } finally {
     loading.value = false
+  }
+}
+
+const startPolling = () => {
+  stopPolling()
+  pollTimer = setInterval(async () => {
+    try {
+      const data = await submissionStore.fetchSubmissionDetail(props.submissionId)
+      submissionData.value = data
+      if (data.status >= 2) {
+        stopPolling()
+      }
+    } catch {
+      // 轮询失败静默忽略
+    }
+  }, 1500)
+}
+
+const stopPolling = () => {
+  if (pollTimer) {
+    clearInterval(pollTimer)
+    pollTimer = null
   }
 }
 
@@ -231,6 +264,10 @@ const getResultType = (result) => {
 onMounted(() => {
   fetchSubmissionDetail()
 })
+
+onBeforeUnmount(() => {
+  stopPolling()
+})
 </script>
 
 <style scoped>
@@ -254,6 +291,11 @@ onMounted(() => {
 
 .submission-id {
   color: #303133;
+}
+
+.judging-hint {
+  margin-left: 12px;
+  vertical-align: middle;
 }
 
 .submission-content {
